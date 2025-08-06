@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    container_name: postgres-dictionary
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: dictionary
+      POSTGRES_USER: dictionary
+      POSTGRES_PASSWORD: dictionary
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dictionary -d dictionary"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    networks:
+      - dictionary
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-dictionary
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "desafio@coodesh.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - dictionary
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-dictionary
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redisdata:/data
+    networks:
+      - dictionary
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  dictionary:
+    driver: bridge
