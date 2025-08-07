@@ -1,6 +1,7 @@
 import fastifyJwt from "@fastify/jwt";
-import Fastify from "fastify";
+import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import dotenv from 'dotenv';
+import registerRoutes from "@/infrastructure/http/routes.js";
 
 dotenv.config({ path: './.env' });
 
@@ -12,7 +13,7 @@ await server.register(fastifyJwt, {
 
 server.decorate(
     'authenticate',
-    async (request: any, reply: any) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
         try {
             await request.jwtVerify();
         } catch (err) {
@@ -20,5 +21,7 @@ server.decorate(
         }
     }
 );
+
+await registerRoutes(server);
 
 export default server;

@@ -13,10 +13,16 @@
         "outDir": "dist",
         "rootDir": "src",
         "resolveJsonModule": true,
+        "baseUrl": ".",
         "typeRoots": [
             "node_modules/@types",
             "src/@types"
-        ]
+        ],
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        }
     },
     "exclude": [
         "node_modules",
