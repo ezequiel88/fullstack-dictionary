@@ -15,7 +15,7 @@ const registerRoutes = async (app: FastifyInstance) => {
 
     app.setErrorHandler((error, request, reply) => {
         request.log.error(error);
-        reply.status(500).send({ error: error.message });
+        reply.code(500).send({ error: error.message });
     });
 };
 
