@@ -57,12 +57,12 @@ export class UserController {
   static markFavorite = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     try {
       const userId = (request as FastifyCustomRequest).user.id;
-      const { id } = request.params as { id: string };
+      const { wordId } = request.params as { wordId: string };
 
       const wordRepository = UserController.container.wordRepository;
       const favoriteRepository = UserController.container.favoriteRepository;
 
-      const dbWord = await wordRepository.findById(id);
+      const dbWord = await wordRepository.findById(wordId);
       if (!dbWord) {
         return reply.code(404).send({ message: 'Word not found' });
       }
@@ -85,12 +85,12 @@ export class UserController {
   static unmarkFavorite = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     try {
       const userId = (request as FastifyCustomRequest).user.id;
-      const { id } = request.params as { id: string };
+      const { wordId } = request.params as { wordId: string };
 
       const wordRepository = UserController.container.wordRepository;
       const favoriteRepository = UserController.container.favoriteRepository;
 
-      const dbWord = await wordRepository.findById(id);
+      const dbWord = await wordRepository.findById(wordId);
       if (!dbWord) {
         return reply.code(404).send({ message: 'Word not found' });
       }

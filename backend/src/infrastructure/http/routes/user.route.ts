@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { UserController } from "@/infrastructure/http/controller/user.controller.js";
-import { getFavoritesSchema, getHistorySchema, getProfileSchema, markFavoriteSchema, unmarkFavoriteSchema } from "@/infrastructure/swagger/definitions/user.js";
+import { UserController } from "../controller/user.controller.js";
+import { getFavoritesSchema, getHistorySchema, getProfileSchema, markFavoriteSchema, unmarkFavoriteSchema } from "../../swagger/definitions/user.js";
 
 
 const userRoutes = async (app: FastifyInstance) => {

@@ -17,13 +17,14 @@ export class AuthController {
       const exists = await userService.getUserByEmail(parsed.data.email);
 
       if (exists) {
-        return reply.code(400).send({ message: 'User already exists' });
+        return reply.code(400).send({ message: 'Email already exists' });
       }
 
       const user = await userService.createUser(parsed.data);
       const token = await reply.jwtSign({ id: user.id, email: user.email });
 
-      return reply.code(201).send({ 
+      return reply.code(200).send({ 
+        message: 'User created successfully',
         user: {
           id: user.id,
           email: user.email,
@@ -43,7 +44,7 @@ export class AuthController {
       const parsed = signInSchema.safeParse(request.body);
 
       if (!parsed.success) {
-        return reply.code(401).send({ message: 'Invalid credentials' });
+        return reply.code(400).send({ message: parsed.error.message });
       }
 
       const userService = AuthController.container.userService;
@@ -62,6 +63,7 @@ export class AuthController {
       const token = await reply.jwtSign({ id: user.id, email: user.email });
 
       return reply.code(200).send({
+        message: 'Login successful',
         user: {
           id: user.id,
           email: user.email,

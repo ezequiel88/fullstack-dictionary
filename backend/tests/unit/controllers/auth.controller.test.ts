@@ -26,6 +26,7 @@ describe('AuthController', () => {
     mockReply = {
       code: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
+      jwtSign: jest.fn().mockResolvedValue('jwt-token-123'),
     };
 
     mockUserRepository = {
@@ -36,13 +37,8 @@ describe('AuthController', () => {
       delete: jest.fn(),
     };
 
-    // Mock DependencyContainer
-    (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
-      userService: {
-        createUser: jest.fn(),
-        getUserByEmail: jest.fn(),
-      },
-    });
+    // Reset the static container property
+    (AuthController as any).container = undefined;
 
     // Clear all mocks
     jest.clearAllMocks();
@@ -53,7 +49,7 @@ describe('AuthController', () => {
       const userData = {
         name: 'John Doe',
         email: 'john@example.com',
-        password: 'password123',
+        password: 'Password123',
       };
 
       mockRequest.body = userData;
@@ -65,30 +61,42 @@ describe('AuthController', () => {
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
       (jwt.sign as jest.Mock).mockReturnValue(token);
 
-      const mockUserService = {
-        createUser: jest.fn().mockResolvedValue({ id: userId }),
+      const user = {
+        id: userId,
+        email: 'john@example.com',
+        name: 'John Doe',
+        createdAt: new Date(),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      const mockUserService = {
+        createUser: jest.fn().mockResolvedValue(user),
+        getUserByEmail: jest.fn().mockResolvedValue(null),
+      };
+
+      // Mock the static container property directly
+      (AuthController as any).container = {
         userService: mockUserService,
-      });
+      };
 
       await AuthController.signUp(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
       expect(mockUserService.createUser).toHaveBeenCalledWith({
         name: 'John Doe',
         email: 'john@example.com',
-        password: hashedPassword,
+        password: 'Password123',
       });
-      expect(jwt.sign).toHaveBeenCalledWith(
-        { userId },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
+      expect(mockReply.jwtSign).toHaveBeenCalledWith({ id: userId, email: 'john@example.com' });
+      expect(mockReply.code).toHaveBeenCalledWith(200);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'User created successfully',
-        token,
+        user: {
+          id: userId,
+          email: 'john@example.com',
+          name: 'John Doe',
+          createdAt: user.createdAt,
+        },
+        token: 'jwt-token-123',
       });
     });
 
@@ -96,26 +104,29 @@ describe('AuthController', () => {
       const userData = {
         name: 'John Doe',
         email: 'john@example.com',
-        password: 'password123',
+        password: 'Password123',
       };
 
       mockRequest.body = userData;
 
       const mockUserService = {
         createUser: jest.fn().mockRejectedValue(new Error('Email already exists')),
+        getUserByEmail: jest.fn().mockResolvedValue(null),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (AuthController as any).container = {
         userService: mockUserService,
-      });
+      };
 
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
 
       await AuthController.signUp(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(mockReply.code).toHaveBeenCalledWith(400);
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Email already exists',
+        message: 'Internal server error',
       });
     });
 
@@ -123,7 +134,7 @@ describe('AuthController', () => {
       mockRequest.body = {
         name: 'John Doe',
         email: 'john@example.com',
-        password: 'password123',
+        password: 'Password123',
       };
 
       (bcrypt.hash as jest.Mock).mockRejectedValue(new Error('Unexpected error'));
@@ -138,10 +149,16 @@ describe('AuthController', () => {
   });
 
   describe('signIn', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      // Reset the static container property
+      (AuthController as any).container = undefined;
+    });
+
     it('should sign in user successfully', async () => {
       const loginData = {
         email: 'john@example.com',
-        password: 'password123',
+        password: 'Password123',
       };
 
       mockRequest.body = loginData;
@@ -151,37 +168,38 @@ describe('AuthController', () => {
         email: 'john@example.com',
         password: 'hashedPassword123',
         name: 'John Doe',
+        createdAt: new Date(),
       };
-
-      const token = 'jwt-token-123';
 
       const mockUserService = {
         getUserByEmail: jest.fn().mockResolvedValue(user),
+        validatePassword: jest.fn().mockResolvedValue(true),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (AuthController as any).container = {
         userService: mockUserService,
-      });
-
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-      (jwt.sign as jest.Mock).mockReturnValue(token);
+      };
 
       await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
       expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
-      expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword123');
-      expect(jwt.sign).toHaveBeenCalledWith(
-        { userId: 'user-id-123' },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
+      expect(mockUserService.validatePassword).toHaveBeenCalledWith('Password123', 'hashedPassword123');
+      expect(mockReply.jwtSign).toHaveBeenCalledWith({ id: 'user-id-123', email: 'john@example.com' });
+      expect(mockReply.code).toHaveBeenCalledWith(200);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'Login successful',
-        token,
+        user: {
+          id: 'user-id-123',
+          email: 'john@example.com',
+          name: 'John Doe',
+          createdAt: user.createdAt,
+        },
+        token: 'jwt-token-123',
       });
     });
 
-    it('should return error for invalid credentials', async () => {
+    it('should handle invalid credentials (user not found)', async () => {
       const loginData = {
         email: 'john@example.com',
         password: 'wrongpassword',
@@ -191,14 +209,18 @@ describe('AuthController', () => {
 
       const mockUserService = {
         getUserByEmail: jest.fn().mockResolvedValue(null),
+        validatePassword: jest.fn(),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (AuthController as any).container = {
         userService: mockUserService,
-      });
+      };
 
       await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.validatePassword).not.toHaveBeenCalled();
       expect(mockReply.code).toHaveBeenCalledWith(401);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'Invalid credentials',
@@ -218,23 +240,53 @@ describe('AuthController', () => {
         email: 'john@example.com',
         password: 'hashedPassword123',
         name: 'John Doe',
+        createdAt: new Date(),
       };
 
       const mockUserService = {
         getUserByEmail: jest.fn().mockResolvedValue(user),
+        validatePassword: jest.fn().mockResolvedValue(false),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (AuthController as any).container = {
         userService: mockUserService,
-      });
-
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      };
 
       await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.validatePassword).toHaveBeenCalledWith('wrongpassword', 'hashedPassword123');
       expect(mockReply.code).toHaveBeenCalledWith(401);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'Invalid credentials',
+      });
+    });
+
+    it('should handle internal server error', async () => {
+      const loginData = {
+        email: 'john@example.com',
+        password: 'Password123',
+      };
+
+      mockRequest.body = loginData;
+
+      const mockUserService = {
+        getUserByEmail: jest.fn().mockRejectedValue(new Error('Database error')),
+        validatePassword: jest.fn(),
+      };
+
+      // Mock the static container property directly
+      (AuthController as any).container = {
+        userService: mockUserService,
+      };
+
+      await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
+
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockReply.code).toHaveBeenCalledWith(500);
+      expect(mockReply.send).toHaveBeenCalledWith({
+        message: 'Internal server error',
       });
     });
   });

@@ -1,7 +1,7 @@
 import { DictionaryService } from '../../../src/application/dictionary.service.js';
 import { IDictionaryService } from '../../../src/domain/services/dictionary.service.interface.js';
 import { ICacheService } from '../../../src/domain/services/cache.service.interface.js';
-import { WordDefinition } from '../../../src/domain/entities/word-definition.entity.js';
+import { WordEntry } from '../../../src/infrastructure/types/dictionary.js';
 
 describe('DictionaryService', () => {
   let dictionaryService: DictionaryService;
@@ -26,7 +26,7 @@ describe('DictionaryService', () => {
 
   describe('searchWord', () => {
     const word = 'hello';
-    const wordDefinition = {
+    const rawWordDefinition = [{
       word: 'hello',
       phonetics: [{ text: '/həˈloʊ/' }],
       meanings: [
@@ -35,33 +35,49 @@ describe('DictionaryService', () => {
           definitions: [{ definition: 'A greeting' }],
         },
       ],
-    };
+    }];
+    
+    const normalizedWordDefinition = [{
+      word: 'hello',
+      phonetic: null,
+      phonetics: [{ text: '/həˈloʊ/', audio: null, sourceUrl: undefined, license: undefined }],
+      meanings: [
+        {
+          partOfSpeech: 'noun',
+          definitions: [{ definition: 'A greeting', example: undefined, synonyms: [], antonyms: [] }],
+          synonyms: [],
+          antonyms: [],
+        },
+      ],
+      license: undefined,
+      sourceUrls: [],
+    }];
 
     it('should return cached result when available', async () => {
-      const cachedResult = { ...wordDefinition, fromCache: true };
-      mockCacheService.get.mockResolvedValue(JSON.stringify(wordDefinition));
+      const cachedResult = { word: normalizedWordDefinition, fromCache: true };
+      mockCacheService.get.mockResolvedValue(JSON.stringify(normalizedWordDefinition));
 
       const result = await dictionaryService.searchWord(word);
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(`word:${word}`);
+      expect(mockCacheService.get).toHaveBeenCalledWith(`dictionary:word:${word}`);
       expect(mockExternalDictionaryService.getWordDefinition).not.toHaveBeenCalled();
       expect(result).toEqual(cachedResult);
     });
 
     it('should fetch from external service when not cached', async () => {
       mockCacheService.get.mockResolvedValue(null);
-      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(wordDefinition as any);
+      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(rawWordDefinition as any);
 
       const result = await dictionaryService.searchWord(word);
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(`word:${word}`);
+      expect(mockCacheService.get).toHaveBeenCalledWith(`dictionary:word:${word}`);
       expect(mockExternalDictionaryService.getWordDefinition).toHaveBeenCalledWith(word);
       expect(mockCacheService.set).toHaveBeenCalledWith(
-        `word:${word}`,
-        JSON.stringify(wordDefinition),
+        `dictionary:word:${word}`,
+        JSON.stringify(normalizedWordDefinition),
         3600
       );
-      expect(result).toEqual({ ...wordDefinition, fromCache: false });
+      expect(result).toEqual({ word: normalizedWordDefinition, fromCache: false });
     });
 
     it('should return null when word not found', async () => {
@@ -70,7 +86,7 @@ describe('DictionaryService', () => {
 
       const result = await dictionaryService.searchWord(word);
 
-      expect(mockCacheService.get).toHaveBeenCalledWith(`word:${word}`);
+      expect(mockCacheService.get).toHaveBeenCalledWith(`dictionary:word:${word}`);
       expect(mockExternalDictionaryService.getWordDefinition).toHaveBeenCalledWith(word);
       expect(mockCacheService.set).not.toHaveBeenCalled();
       expect(result).toBeNull();
@@ -78,32 +94,32 @@ describe('DictionaryService', () => {
 
     it('should handle cache get error gracefully', async () => {
       mockCacheService.get.mockRejectedValue(new Error('Cache error'));
-      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(wordDefinition as any);
+      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(rawWordDefinition as any);
 
       const result = await dictionaryService.searchWord(word);
 
       expect(mockExternalDictionaryService.getWordDefinition).toHaveBeenCalledWith(word);
-      expect(result).toEqual({ ...wordDefinition, fromCache: false });
+      expect(result).toEqual({ word: normalizedWordDefinition, fromCache: false });
     });
 
     it('should handle cache set error gracefully', async () => {
       mockCacheService.get.mockResolvedValue(null);
       mockCacheService.set.mockRejectedValue(new Error('Cache set error'));
-      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(wordDefinition as any);
+      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(rawWordDefinition as any);
 
       const result = await dictionaryService.searchWord(word);
 
-      expect(result).toEqual({ ...wordDefinition, fromCache: false });
+      expect(result).toEqual({ word: normalizedWordDefinition, fromCache: false });
     });
 
     it('should handle invalid cached JSON gracefully', async () => {
       mockCacheService.get.mockResolvedValue('invalid json');
-      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(wordDefinition as any);
+      mockExternalDictionaryService.getWordDefinition.mockResolvedValue(rawWordDefinition as any);
 
       const result = await dictionaryService.searchWord(word);
 
       expect(mockExternalDictionaryService.getWordDefinition).toHaveBeenCalledWith(word);
-      expect(result).toEqual({ ...wordDefinition, fromCache: false });
+      expect(result).toEqual({ word: normalizedWordDefinition, fromCache: false });
     });
   });
 
@@ -114,7 +130,7 @@ describe('DictionaryService', () => {
 
       const result = await dictionaryService.clearWordCache(word);
 
-      expect(mockCacheService.delete).toHaveBeenCalledWith(`word:${word}`);
+      expect(mockCacheService.delete).toHaveBeenCalledWith(`dictionary:word:${word}`);
       expect(result).toBe(true);
     });
 
@@ -124,7 +140,7 @@ describe('DictionaryService', () => {
 
       const result = await dictionaryService.clearWordCache(word);
 
-      expect(mockCacheService.delete).toHaveBeenCalledWith(`word:${word}`);
+      expect(mockCacheService.delete).toHaveBeenCalledWith(`dictionary:word:${word}`);
       expect(result).toBe(false);
     });
   });

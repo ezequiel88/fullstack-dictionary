@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import userRoutes from "@/infrastructure/http/routes/user.route.js";
-import authRoutes from "@/infrastructure/http/routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
+import authRoutes from "./routes/auth.route.js";
 import wordRoutes from "./routes/word.route.js";
 
 const registerRoutes = async (app: FastifyInstance) => {

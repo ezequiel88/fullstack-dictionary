@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { build } from '../../src/server.js';
-import { prisma } from '../../src/infrastructure/database/prisma.js';
+import prisma from '../../src/infrastructure/database/prisma.js';
 
 describe('Auth Routes', () => {
   let app: FastifyInstance;

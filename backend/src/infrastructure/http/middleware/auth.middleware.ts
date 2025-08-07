@@ -1,7 +1,6 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { DependencyContainer } from '@/infrastructure/container/dependency-container.js';
+import { FastifyRequest, FastifyReply, FastifyCustomRequest } from 'fastify';
 import jwt from 'jsonwebtoken';
-import { DependencyContainer } from '../../container/dependency-container';
-import { FastifyCustomRequest } from '../../types/fastify';
 
 export interface JWTPayload {
   userId: string;
@@ -72,8 +71,7 @@ export class AuthMiddleware {
       // Attach user to request
       (request as FastifyCustomRequest).user = {
         id: user.id,
-        email: user.email,
-        name: user.name,
+        email: user.email
       };
 
     } catch (error) {

@@ -1,10 +1,17 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { WordController } from '../../../src/infrastructure/http/controller/word.controller.js';
 import { DependencyContainer } from '../../../src/infrastructure/container/dependency-container.js';
-import { FastifyCustomRequest } from '../../../src/infrastructure/types/fastify.js';
 
 // Mock dependencies
 jest.mock('../../../src/infrastructure/container/dependency-container');
+
+interface FastifyCustomRequest extends FastifyRequest {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+}
 
 describe('WordController', () => {
   let mockRequest: Partial<FastifyCustomRequest>;
@@ -12,7 +19,11 @@ describe('WordController', () => {
 
   beforeEach(() => {
     mockRequest = {
-      user: { id: 'user-id-123' },
+      user: { 
+        id: 'user-id-123',
+        email: 'test@example.com',
+        name: 'Test User'
+      },
       params: {},
       query: {},
       log: {
@@ -27,9 +38,11 @@ describe('WordController', () => {
     };
 
     jest.clearAllMocks();
+    // Reset the static container property
+    (WordController as any).container = undefined;
   });
 
-  describe('getWords', () => {
+  describe('getWordsList', () => {
     it('should return words with pagination successfully', async () => {
       mockRequest.query = { search: 'hello', limit: '10', page: '1' };
 
@@ -38,61 +51,59 @@ describe('WordController', () => {
         { id: 'word-2', value: 'help' },
       ];
 
-      const mockWordRepository = {
-        findMany: jest.fn().mockResolvedValue({
-          words,
-          totalCount: 2,
-          hasNextPage: false,
-        }),
+      const response = {
+        results: words,
+        totalDocs: 2,
+        previous: null,
+        next: null,
+        hasNext: false,
+        hasPrev: false,
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
-        wordRepository: mockWordRepository,
-      });
+      const mockWordRepository = {
+        findMany: jest.fn().mockResolvedValue(response),
+      };
 
-      await WordController.getWords(mockRequest as FastifyRequest, mockReply as FastifyReply);
+      // Mock the static container property directly
+      (WordController as any).container = {
+        wordRepository: mockWordRepository,
+      };
+
+      await WordController.getWordsList(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
       expect(mockWordRepository.findMany).toHaveBeenCalledWith({
         search: 'hello',
-        limit: 10,
-        cursor: undefined,
+        limit: '10',
+        page: '1',
       });
 
-      expect(mockReply.send).toHaveBeenCalledWith({
-        results: words,
-        totalDocs: 2,
-        page: 1,
-        totalPages: 1,
-        hasNext: false,
-        hasPrev: false,
-      });
+      expect(mockReply.send).toHaveBeenCalledWith(response);
     });
 
     it('should handle empty search results', async () => {
       mockRequest.query = { search: 'nonexistent' };
 
-      const mockWordRepository = {
-        findMany: jest.fn().mockResolvedValue({
-          words: [],
-          totalCount: 0,
-          hasNextPage: false,
-        }),
-      };
-
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
-        wordRepository: mockWordRepository,
-      });
-
-      await WordController.getWords(mockRequest as FastifyRequest, mockReply as FastifyReply);
-
-      expect(mockReply.send).toHaveBeenCalledWith({
+      const response = {
         results: [],
         totalDocs: 0,
-        page: 1,
-        totalPages: 0,
+        previous: null,
+        next: null,
         hasNext: false,
         hasPrev: false,
-      });
+      };
+
+      const mockWordRepository = {
+        findMany: jest.fn().mockResolvedValue(response),
+      };
+
+      // Mock the static container property directly
+      (WordController as any).container = {
+        wordRepository: mockWordRepository,
+      };
+
+      await WordController.getWordsList(mockRequest as FastifyRequest, mockReply as FastifyReply);
+
+      expect(mockReply.send).toHaveBeenCalledWith(response);
     });
   });
 
@@ -131,12 +142,13 @@ describe('WordController', () => {
         findByUserAndWord: jest.fn().mockResolvedValue(favorite),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (WordController as any).container = {
         wordRepository: mockWordRepository,
         dictionaryService: mockDictionaryService,
         historyRepository: mockHistoryRepository,
         favoriteRepository: mockFavoriteRepository,
-      });
+      };
 
       await WordController.getWord(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
@@ -160,9 +172,10 @@ describe('WordController', () => {
         findById: jest.fn().mockResolvedValue(null),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (WordController as any).container = {
         wordRepository: mockWordRepository,
-      });
+      };
 
       await WordController.getWord(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
@@ -185,10 +198,11 @@ describe('WordController', () => {
         searchWord: jest.fn().mockResolvedValue(null),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (WordController as any).container = {
         wordRepository: mockWordRepository,
         dictionaryService: mockDictionaryService,
-      });
+      };
 
       await WordController.getWord(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
@@ -230,12 +244,13 @@ describe('WordController', () => {
         findByUserAndWord: jest.fn().mockResolvedValue(null),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (WordController as any).container = {
         wordRepository: mockWordRepository,
         dictionaryService: mockDictionaryService,
         historyRepository: mockHistoryRepository,
         favoriteRepository: mockFavoriteRepository,
-      });
+      };
 
       await WordController.getWord(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
@@ -254,9 +269,10 @@ describe('WordController', () => {
         findById: jest.fn().mockRejectedValue(new Error('Database error')),
       };
 
-      (DependencyContainer.getInstance as jest.Mock).mockReturnValue({
+      // Mock the static container property directly
+      (WordController as any).container = {
         wordRepository: mockWordRepository,
-      });
+      };
 
       await WordController.getWord(mockRequest as FastifyRequest, mockReply as FastifyReply);
 

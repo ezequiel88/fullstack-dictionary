@@ -8,7 +8,7 @@ export class ValidationMiddleware {
         schema.parse(request.body);
       } catch (error) {
         if (error instanceof ZodError) {
-          const formattedErrors = error.errors.map(err => ({
+          const formattedErrors = error.issues.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           }));
@@ -33,7 +33,7 @@ export class ValidationMiddleware {
         schema.parse(request.params);
       } catch (error) {
         if (error instanceof ZodError) {
-          const formattedErrors = error.errors.map(err => ({
+          const formattedErrors = error.issues.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           }));
@@ -58,7 +58,7 @@ export class ValidationMiddleware {
         schema.parse(request.query);
       } catch (error) {
         if (error instanceof ZodError) {
-          const formattedErrors = error.errors.map(err => ({
+          const formattedErrors = error.issues.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           }));

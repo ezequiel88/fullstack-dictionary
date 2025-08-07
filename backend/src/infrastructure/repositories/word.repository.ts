@@ -116,7 +116,7 @@ export class FavoriteRepository implements IFavoriteRepository {
     });
   }
 
-  async create(userId: string, wordId: string): Promise<Favorite> {
+  async create(userId: string, wordId: string): Promise<Favorite & { word: Word }> {
     return prisma.favorite.create({
       data: {
         user: { connect: { id: userId } },
@@ -132,7 +132,7 @@ export class FavoriteRepository implements IFavoriteRepository {
     });
   }
 
-  async findByUser(userId: string): Promise<Favorite[]> {
+  async findByUser(userId: string): Promise<(Favorite & { word: Word })[]> {
     return prisma.favorite.findMany({
       where: { userId },
       include: { word: true }
@@ -150,7 +150,7 @@ export class HistoryRepository implements IHistoryRepository {
     });
   }
 
-  async findByUser(userId: string): Promise<History[]> {
+  async findByUser(userId: string): Promise<(History & { word: Word })[]> {
     return prisma.history.findMany({
       where: { userId },
       include: { word: true },

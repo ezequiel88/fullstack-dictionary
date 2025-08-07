@@ -27,12 +27,22 @@ export class DictionaryService {
     const cacheKey = `dictionary:word:${word.toLowerCase()}`;
 
     // Try to get from cache first
-    const cached = await this.cacheService.get(cacheKey);
-    if (cached) {
-      return {
-        word: JSON.parse(cached),
-        fromCache: true
-      };
+    try {
+      const cached = await this.cacheService.get(cacheKey);
+      if (cached) {
+        try {
+          return {
+            word: JSON.parse(cached),
+            fromCache: true
+          };
+        } catch (parseError) {
+          // Invalid JSON in cache, continue to fetch from external API
+          console.warn('Invalid JSON in cache for word:', word);
+        }
+      }
+    } catch (cacheError) {
+      // Cache error, continue to fetch from external API
+      console.warn('Cache get error for word:', word, cacheError);
     }
 
     // Fetch from external API
@@ -45,11 +55,16 @@ export class DictionaryService {
     const wordNormalized = normalizeDictionaryEntries(wordDictionary);
 
     // Cache the result
-    await this.cacheService.set(
-      cacheKey, 
-      JSON.stringify(wordNormalized),
-      3600 // 1 hour TTL
-    );
+    try {
+      await this.cacheService.set(
+        cacheKey, 
+        JSON.stringify(wordNormalized),
+        3600 // 1 hour TTL
+      );
+    } catch (cacheError) {
+      // Cache set error, continue without caching
+      console.warn('Cache set error for word:', word, cacheError);
+    }
 
     return { 
       word: wordNormalized, 
@@ -57,8 +72,14 @@ export class DictionaryService {
     };
   }
 
-  async clearWordCache(word: string): Promise<void> {
+  async clearWordCache(word: string): Promise<boolean> {
     const cacheKey = `dictionary:word:${word.toLowerCase()}`;
-    await this.cacheService.delete(cacheKey);
+    try {
+      await this.cacheService.delete(cacheKey);
+      return true;
+    } catch (error) {
+      console.warn('Cache delete error for word:', word, error);
+      return false;
+    }
   }
 }
