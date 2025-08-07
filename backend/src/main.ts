@@ -1,4 +1,8 @@
+import dotenv from 'dotenv';
 import server from "./server.js";
+
+// Load environment variables
+dotenv.config({ path: './.env' });
 
 const PORT = process.env.PORT || 3030;
 

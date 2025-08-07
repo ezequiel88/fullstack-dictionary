@@ -22,8 +22,8 @@ export interface CursorQuery {
 export interface CursorResponse {
     results: Word[];
     totalDocs: number;
-    previous: string;
-    next: string;
+    previous: string | null;
+    next: string | null;
     hasNext: boolean;
     hasPrev: boolean;
 }

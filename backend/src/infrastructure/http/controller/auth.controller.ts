@@ -1,61 +1,78 @@
-import { UserService } from "@/application/user.service.js";
-import { signinSchema, signupSchema } from "@/infrastructure/validation/auth.js";
+import { DependencyContainer } from '../../container/dependency-container.js';
+import { signInSchema, signUpSchema } from '../../validation/schemas.js';
 import { FastifyRequest, FastifyReply } from 'fastify';
 
 export class AuthController {
-    static signUp = async (request: FastifyRequest, reply: FastifyReply) => {
-        const parsed = signupSchema.safeParse(request.body);
+  private static container = DependencyContainer.getInstance();
 
-        if (!parsed.success) {
-            return reply.code(400).send({ message: parsed.error.message });
-        }
+  static signUp = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+    try {
+      const parsed = signUpSchema.safeParse(request.body);
 
-        const exists = await UserService.getUserByEmail(parsed.data.email);
+      if (!parsed.success) {
+        return reply.code(400).send({ message: parsed.error.message });
+      }
 
-        if (exists) {
-            return reply.code(400).send({ message: "User already exists" });
-        }
+      const userService = AuthController.container.userService;
+      const exists = await userService.getUserByEmail(parsed.data.email);
 
-        const user = await UserService.createUser(parsed.data);
-        const token = await reply.jwtSign({ id: user.id, email: user.email });
+      if (exists) {
+        return reply.code(400).send({ message: 'User already exists' });
+      }
 
-        return reply.code(201).send({ user, token });
-    };
+      const user = await userService.createUser(parsed.data);
+      const token = await reply.jwtSign({ id: user.id, email: user.email });
 
-    static signIn = async (request: FastifyRequest, reply: FastifyReply) => {
-        try {
-            const parsed = signinSchema.safeParse(request.body);
+      return reply.code(201).send({ 
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          createdAt: user.createdAt
+        }, 
+        token 
+      });
+    } catch (error) {
+      request.log.error(error);
+      return reply.code(500).send({ message: 'Internal server error' });
+    }
+  };
 
-            if (!parsed.success) {
-                return reply.code(401).send({ message: "Invalid credentials" });
-            }
+  static signIn = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+    try {
+      const parsed = signInSchema.safeParse(request.body);
 
-            const user = await UserService.getUserByEmail(parsed.data.email);
+      if (!parsed.success) {
+        return reply.code(401).send({ message: 'Invalid credentials' });
+      }
 
-            if (!user) {
-                return reply.code(401).send({ message: "Invalid credentials" });
-            }
+      const userService = AuthController.container.userService;
+      const user = await userService.getUserByEmail(parsed.data.email);
 
-            const isValid = await UserService.validatePassword(parsed.data.password, user.password);
+      if (!user) {
+        return reply.code(401).send({ message: 'Invalid credentials' });
+      }
 
-            if (!isValid) {
-                return reply.code(401).send({ message: "Invalid credentials" });
-            }
+      const isValid = await userService.validatePassword(parsed.data.password, user.password);
 
-            const token = await reply.jwtSign({ id: user.id, email: user.email });
+      if (!isValid) {
+        return reply.code(401).send({ message: 'Invalid credentials' });
+      }
 
-            return reply.code(200).send({
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    createdAt: user.createdAt
-                },
-                token
-            });
-        } catch (error) {
-            request.log.error(error);
-            return reply.code(500).send({ message: "Internal server error" });
-        }
-    };
+      const token = await reply.jwtSign({ id: user.id, email: user.email });
+
+      return reply.code(200).send({
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          createdAt: user.createdAt
+        },
+        token
+      });
+    } catch (error) {
+      request.log.error(error);
+      return reply.code(500).send({ message: 'Internal server error' });
+    }
+  };
 }

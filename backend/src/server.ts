@@ -1,33 +1,48 @@
 import fastifyJwt from "@fastify/jwt";
 import fastifyCors from "@fastify/cors";
-import Fastify, { FastifyReply, FastifyRequest } from "fastify";
+import Fastify, { FastifyReply, FastifyRequest, FastifyInstance } from "fastify";
 import dotenv from 'dotenv';
-import registerRoutes from "@/infrastructure/http/routes.js";
-import setupSwagger from "@/infrastructure/swagger/swagger.js";
+import registerRoutes from "./infrastructure/http/routes.js";
+import setupSwagger from "./infrastructure/swagger/swagger.js";
 
-dotenv.config({ path: './.env' });
+export function build(opts = {}): FastifyInstance {
+  const server = Fastify({ 
+    logger: process.env.NODE_ENV !== 'test',
+    ...opts 
+  });
 
-const server = Fastify({ logger: true });
+  // Register JWT plugin
+  server.register(fastifyJwt, {
+    secret: process.env.JWT_SECRET || 'test-secret'
+  });
 
-await server.register(fastifyJwt, {
-    secret: process.env.JWT_SECRET
-});
-
-server.decorate(
+  // Decorate with authenticate method
+  server.decorate(
     'authenticate',
     async (request: FastifyRequest, reply: FastifyReply) => {
-        try {
-            await request.jwtVerify();
-        } catch (err) {
-            reply.send(err);
-        }
+      try {
+        await request.jwtVerify();
+      } catch (err) {
+        reply.send(err);
+      }
     }
-);
+  );
 
-await server.register(fastifyCors);
+  // Register CORS
+  server.register(fastifyCors);
 
-await setupSwagger(server);
+  // Setup Swagger (only in non-test environment)
+  if (process.env.NODE_ENV !== 'test') {
+    server.register(setupSwagger);
+  }
 
-await registerRoutes(server);
+  // Register routes
+  server.register(registerRoutes);
+
+  return server;
+}
+
+// Create and export default server instance
+const server = build();
 
 export default server;

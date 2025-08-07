@@ -1,6 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { UserCreateSchema, UserLoginResponseSchema, UserLoginSchema, UserSchema } from '@/infrastructure/swagger/schemas/user.js';
-import { ErrorResponseSchema } from '@/infrastructure/swagger/schemas/error.js';
+import { UserCreateSchema, UserLoginResponseSchema, UserLoginSchema, UserSchema } from './schemas/user.js';
+import { ErrorResponseSchema } from './schemas/error.js';
 import { FavoriteSchema, FavoritesSchema, FavoriteRequestSchema } from './schemas/favorite.js';
 import HistorySchema from './schemas/history.js';
 import { WordDefinitionSchema, WordListSchema } from './schemas/word.js';
