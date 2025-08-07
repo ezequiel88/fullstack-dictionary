@@ -4,3 +4,9 @@ export type User = {
     email: string;
     createdAt: string;
 };
+
+export interface UserCreate {
+    name: string;
+    email: string;
+    password: string;
+}

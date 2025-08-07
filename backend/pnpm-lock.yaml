@@ -38,6 +38,9 @@ importers:
       redis:
         specifier: ^5.8.0
         version: 5.8.0
+      zod:
+        specifier: ^4.0.15
+        version: 4.0.15
     devDependencies:
       '@types/node':
         specifier: ^24.2.0
@@ -1006,6 +1009,9 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
+  zod@4.0.15:
+    resolution: {integrity: sha512-2IVHb9h4Mt6+UXkyMs0XbfICUh1eUrlJJAOupBHUhLRnKkruawyDddYRCs0Eizt900ntIMk9/4RksYl+FgSpcQ==}
+
 snapshots:
 
   '@babel/code-frame@7.27.1':
@@ -1927,3 +1933,5 @@ snapshots:
   xtend@4.0.2: {}
 
   yaml@2.8.1: {}
+
+  zod@4.0.15: {}

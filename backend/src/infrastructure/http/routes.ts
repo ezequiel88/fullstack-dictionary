@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import userRoutes from "@/infrastructure/http/routes/user.route.js";
 import authRoutes from "@/infrastructure/http/routes/auth.route.js";
+import wordRoutes from "./routes/word.route.js";
 
 const registerRoutes = async (app: FastifyInstance) => {
 
@@ -10,6 +11,7 @@ const registerRoutes = async (app: FastifyInstance) => {
 
     app.register(userRoutes, { prefix: "/user" });
     app.register(authRoutes, { prefix: "/auth" });
+    app.register(wordRoutes, { prefix: "/entries" });
 
     app.setErrorHandler((error, request, reply) => {
         request.log.error(error);
