@@ -3,7 +3,7 @@ import api from "@/infrastructure/lib/api.js";
 import { DictionaryResponse } from "@/infrastructure/types/dictionary.js";
 
 export class DictionaryService {
-    private async getWordDictionary(word: string) {
+     static async getWordDictionary(word: string) {
         try {
             const { data } = await api.get<DictionaryResponse>(`/${word}`);
             return data
@@ -12,7 +12,7 @@ export class DictionaryService {
         }
     }
 
-    async searchWord(word: string) {
+    static async searchWord(word: string) {
         const cacheKey = `dictionary:word:${word.toLowerCase()}`
 
         if (redisClient) {
