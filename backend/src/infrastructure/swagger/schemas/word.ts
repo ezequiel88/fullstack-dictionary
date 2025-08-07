@@ -15,28 +15,23 @@ export const WordListSchema: OpenAPIV3.SchemaObject = {
       }
     },
     totalDocs: {
-      type: 'integer',
-      example: 12345
+      type: 'integer'
     },
     previous: {
       type: 'string',
       format: 'ulid',
-      nullable: true,
-      example: '01hxyz...'
+      nullable: true
     },
     next: {
       type: 'string',
       format: 'ulid',
-      nullable: true,
-      example: '01hxza...'
+      nullable: true
     },
     hasNext: {
       type: 'boolean',
-      example: true
     },
     hasPrev: {
       type: 'boolean',
-      example: false
     }
   },
   required: ['results', 'totalDocs', 'hasNext', 'hasPrev']
@@ -48,20 +43,16 @@ export const WordDefinitionSchema: OpenAPIV3.SchemaObject = {
     id: {
       type: 'string',
       format: 'ulid',
-      example: '01hxyz...'
     },
     isFavorite: {
       type: 'boolean',
-      example: false
     },
     word: {
       type: 'string',
-      example: 'hello',
     },
     phonetic: {
       type: 'string',
       nullable: true,
-      example: '/həˈloʊ/',
     },
     phonetics: {
       type: 'array',
@@ -71,22 +62,19 @@ export const WordDefinitionSchema: OpenAPIV3.SchemaObject = {
           text: {
             type: 'string',
             nullable: true,
-            example: '/həˈloʊ/',
           },
           audio: {
             type: 'string',
             nullable: true,
-            example: 'https://api.dictionaryapi.dev/media/pronunciations/en/hello-au.mp3',
           },
           sourceUrl: {
             type: 'string',
-            example: 'https://commons.wikimedia.org/w/index.php?curid=75797336',
           },
           license: {
             type: 'object',
             properties: {
-              name: { type: 'string', example: 'BY-SA 4.0' },
-              url: { type: 'string', format: 'uri', example: 'https://creativecommons.org/licenses/by-sa/4.0' },
+              name: { type: 'string' },
+              url: { type: 'string', format: 'uri' },
             },
             required: ['name', 'url'],
           },
@@ -101,15 +89,14 @@ export const WordDefinitionSchema: OpenAPIV3.SchemaObject = {
         properties: {
           partOfSpeech: {
             type: 'string',
-            example: 'interjection',
           },
           definitions: {
             type: 'array',
             items: {
               type: 'object',
               properties: {
-                definition: { type: 'string', example: 'A greeting used when answering the telephone.' },
-                example: { type: 'string', example: 'Hello? How may I help you?' },
+                definition: { type: 'string' },
+                example: { type: 'string'},
                 synonyms: {
                   type: 'array',
                   items: { type: 'string' },
@@ -138,8 +125,8 @@ export const WordDefinitionSchema: OpenAPIV3.SchemaObject = {
       type: 'object',
       nullable: true,
       properties: {
-        name: { type: 'string', example: 'CC BY-SA 3.0' },
-        url: { type: 'string', format: 'uri', example: 'https://creativecommons.org/licenses/by-sa/3.0' },
+        name: { type: 'string', },
+        url: { type: 'string', format: 'uri',},
       },
       required: ['name', 'url'],
     },
@@ -148,7 +135,6 @@ export const WordDefinitionSchema: OpenAPIV3.SchemaObject = {
       items: {
         type: 'string',
         format: 'uri',
-        example: 'https://en.wiktionary.org/wiki/hello',
       },
     },
   },
