@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 import { FastifyCustomRequest, FastifyReply, FastifyRequest } from "fastify";
 
 export class WordController {
-    static listWords = async (request: FastifyRequest, reply: FastifyReply) => {
+    static getWordsList = async (request: FastifyRequest, reply: FastifyReply) => {
         try {
             const { search = "", limit = 50, next, previous } = request.query as CursorQuery;
             const pageSize = Math.min(limit, 100);
@@ -20,7 +20,7 @@ export class WordController {
 
             if (next) {
                 const cursor = await prisma.word.findUnique({ where: { id: next } });
-                if (!cursor) return reply.code(400).send({ error: "Invalid next cursor" });
+                if (!cursor) return reply.code(400).send({ message: "Invalid next cursor" });
 
                 words = await prisma.word.findMany({
                     where: {
@@ -35,7 +35,7 @@ export class WordController {
                 });
             } else if (previous) {
                 const cursor = await prisma.word.findUnique({ where: { id: previous } });
-                if (!cursor) return reply.code(400).send({ error: "Invalid previous cursor" });
+                if (!cursor) return reply.code(400).send({ message: "Invalid previous cursor" });
 
                 words = await prisma.word.findMany({
                     where: {
@@ -81,37 +81,37 @@ export class WordController {
 
         } catch (error) {
             request.log.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 
 
-    static getWord = async (request: FastifyCustomRequest, reply: FastifyReply) => {
+    static getWord = async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-            const { id } = request.params as { id: string };
-            const user = request.user;
+            const userId = (request as FastifyCustomRequest).user.id;
+            const { wordId } = request.params as { wordId: string };
 
-            const dbWord = await prisma.word.findUnique({ where: { id } });
+            const dbWord = await prisma.word.findUnique({ where: { id: wordId } });
             if (!dbWord) {
-                return reply.code(404).send({ error: "Word not found" });
+                return reply.code(404).send({ message: "Word not found" });
             }
 
             const result = await DictionaryService.searchWord(dbWord.value);
 
             if (!result) {
-                return reply.code(404).send({ error: "Word not found in dictionary" });
+                return reply.code(404).send({ message: "Word not found in dictionary" });
             }
 
             await prisma.history.upsert({
                 where: {
                     userId_wordId: {
-                        userId: user.id,
+                        userId,
                         wordId: dbWord.id,
                     },
                 },
                 update: {},
                 create: {
-                    userId: user.id,
+                    userId,
                     wordId: dbWord.id,
                 },
             });
@@ -119,7 +119,7 @@ export class WordController {
             const favorite = await prisma.favorite.findUnique({
                 where: {
                     userId_wordId: {
-                        userId: user.id,
+                        userId,
                         wordId: dbWord.id,
                     },
                 },
@@ -128,16 +128,14 @@ export class WordController {
             return reply
                 .header("x-cache", result.fromCache ? "HIT" : "MISS")
                 .send({
-                    result,
-                    word: {
-                        id: dbWord.id,
-                        isFavorite: !!favorite
-                    }
+                    ...result,
+                    id: dbWord.id,
+                    isFavorite: !!favorite
                 });
 
         } catch (error) {
             request.log.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 }

@@ -1,6 +1,9 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { UserCreateSchema, UserLoginResponseSchema, UserLoginSchema, UserSchema } from '@/infrastructure/swagger/schemas/user.js';
 import { ErrorResponseSchema } from '@/infrastructure/swagger/schemas/error.js';
+import { FavoriteSchema, FavoritesSchema, FavoriteRequestSchema } from './schemas/favorite.js';
+import HistorySchema from './schemas/history.js';
+import { WordDefinitionSchema, WordListSchema } from './schemas/word.js';
 
 export const openapi: OpenAPIV3.Document = {
     openapi: '3.0.3',
@@ -28,11 +31,17 @@ export const openapi: OpenAPIV3.Document = {
             }
         },
         schemas: {
+            ErrorResponse: ErrorResponseSchema,
+            Favorite: FavoriteSchema,
+            Favorites: FavoritesSchema,
+            FavoriteRequest: FavoriteRequestSchema,
+            History: HistorySchema,
             User: UserSchema,
             UserCreate: UserCreateSchema,
             UserLogin: UserLoginSchema,
             UserLoginResponse: UserLoginResponseSchema,
-            ErrorResponse: ErrorResponseSchema,
+            WordDefinition: WordDefinitionSchema,
+            WordList: WordListSchema,
         }
     },
     security: [

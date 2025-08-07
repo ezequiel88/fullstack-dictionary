@@ -1,13 +1,14 @@
 import { FastifyInstance } from "fastify";
+import { WordController } from "../controller/word.controller.js";
+import { getWordSchema, getWordsListSchema } from "@/infrastructure/swagger/definitions/word.js";
 
 
 const wordRoutes = async (app: FastifyInstance) => {
     app.addHook("preValidation", app.authenticate);
 
-    app.get("/en", async (request, reply) => { });
-    app.get("/me/:wordId", async (request, reply) => { });
-    app.post("/me/:wordId/favorite", async (request, reply) => { });
-    app.delete("/me/:wordId/unfavorite", async (request, reply) => { });
+    app.get("/en", { schema: getWordsListSchema }, WordController.getWordsList);
+    app.get("/en/:wordId", { schema: getWordSchema }, WordController.getWord);
+
 };
 
 export default wordRoutes;

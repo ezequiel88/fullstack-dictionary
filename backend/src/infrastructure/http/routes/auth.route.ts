@@ -4,7 +4,7 @@ import { signinSchema, signupSchema } from "@/infrastructure/swagger/definitions
 
 
 const authRoutes = async (app: FastifyInstance) => {
-    app.post("/signin", {schema : signinSchema}, AuthController.signIn);
+    app.post("/signin", { schema: signinSchema }, AuthController.signIn);
     app.post("/signup", { schema: signupSchema }, AuthController.signUp);
 };
 

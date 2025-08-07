@@ -2,11 +2,11 @@ import prisma from "@/infrastructure/database/prisma.js";
 import { FastifyCustomRequest, FastifyReply, FastifyRequest } from "fastify";
 
 export class UserController {
-    static getProfile = async (request: FastifyCustomRequest, reply: FastifyReply) => {
+    static getProfile = async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-            const userId = request.user.id;
+            const userId = (request as FastifyCustomRequest).user.id;
             if (!userId) {
-                return reply.code(401).send({ error: "Unauthorized" });
+                return reply.code(401).send({ message: "Unauthorized" });
             }
 
             const user = await prisma.user.findUnique({
@@ -14,60 +14,62 @@ export class UserController {
             });
 
             if (!user) {
-                return reply.code(404).send({ error: "User not found" });
+                return reply.code(404).send({ message: "User not found" });
             }
 
             return reply.send(user);
         } catch (error) {
             request.log.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 
 
-    static getHistory = async (request: FastifyCustomRequest, reply: FastifyReply) => {
+    static getHistory = async (request: FastifyRequest, reply: FastifyReply) => {
         try {
+            const userId = (request as FastifyCustomRequest).user.id;
             const history = await prisma.history.findMany({
-                where: { userId: request.user.id }
+                where: { userId }
             });
 
             return reply.send(history);
         } catch (error) {
             request.log.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 
-    static getFavorites = async (request: FastifyCustomRequest, reply: FastifyReply) => {
+    static getFavorites = async (request: FastifyRequest, reply: FastifyReply) => {
         try {
+            const userId = (request as FastifyCustomRequest).user.id;
             const favorites = await prisma.favorite.findMany({
-                where: { userId: request.user.id }
+                where: { userId }
             });
 
             return reply.send(favorites);
         } catch (error) {
             request.log.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 
-    static markFavorite = async (request: FastifyCustomRequest, reply: FastifyReply) => {
+    static markFavorite = async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-            const user = request.user;
+            const userId = (request as FastifyCustomRequest).user.id;
             const { id } = request.params as { id: string };
 
             const dbWord = await prisma.word.findUnique({ where: { id } });
             if (!dbWord) {
-                return reply.code(404).send({ error: "Word not found" });
+                return reply.code(404).send({ message: "Word not found" });
             }
 
             const favorite = await prisma.favorite.upsert({
                 where: {
-                    userId_wordId: { userId: user.id, wordId: dbWord.id },
+                    userId_wordId: { userId, wordId: dbWord.id },
                 },
                 update: {},
                 create: {
-                    user: { connect: { id: user.id } },
+                    user: { connect: { id: userId } },
                     word: { connect: { id: dbWord.id } },
                 },
                 include: { word: true },
@@ -82,28 +84,28 @@ export class UserController {
             });
         } catch (error) {
             request.log.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 
-    static unmarkFavorite = async (request: FastifyCustomRequest, reply: FastifyReply) => {
+    static unmarkFavorite = async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-            const user = request.user;
+            const userId = (request as FastifyCustomRequest).user.id;
             const { id } = request.params as { id: string };
 
             const dbWord = await prisma.word.findUnique({ where: { id } });
             if (!dbWord) {
-                return reply.code(404).send({ error: "Word not found" });
+                return reply.code(404).send({ message: "Word not found" });
             }
 
             await prisma.favorite.deleteMany({
-                where: { userId: user.id, wordId: dbWord.id }
+                where: { userId, wordId: dbWord.id }
             });
 
             return reply.code(204).send();
         } catch (error) {
             request.log.error(error);
-            return reply.code(500).send({ error: "Internal server error" });
+            return reply.code(500).send({ message: "Internal server error" });
         }
     };
 }

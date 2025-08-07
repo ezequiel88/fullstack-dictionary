@@ -1,9 +1,10 @@
 import redisClient from "@/infrastructure/cache/redis.js"
 import api from "@/infrastructure/lib/api.js";
 import { DictionaryResponse } from "@/infrastructure/types/dictionary.js";
+import { normalizeDictionaryEntries } from "@/infrastructure/utils/normalizeDictionaryEntries.js";
 
 export class DictionaryService {
-     static async getWordDictionary(word: string) {
+    static async getWordDictionary(word: string) {
         try {
             const { data } = await api.get<DictionaryResponse>(`/${word}`);
             return data
@@ -32,13 +33,12 @@ export class DictionaryService {
             return null;
         }
 
+        const wordNormalized = normalizeDictionaryEntries(wordDictionary);
+
         if (redisClient) {
-            await redisClient.set(cacheKey, JSON.stringify(wordDictionary));
+            await redisClient.set(cacheKey, JSON.stringify(wordNormalized));
         }
 
-        return {
-            word: wordDictionary,
-            fromCache: false
-        };
+        return { word: wordNormalized, fromCache: false };
     }
 }
