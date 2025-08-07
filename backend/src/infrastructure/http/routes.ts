@@ -9,8 +9,8 @@ const registerRoutes = async (app: FastifyInstance) => {
         message: "Fullstack Challenge 🏅 - Dictionary"
     }));
 
-    app.register(userRoutes, { prefix: "/user" });
     app.register(authRoutes, { prefix: "/auth" });
+    app.register(userRoutes, { prefix: "/user" });
     app.register(wordRoutes, { prefix: "/entries" });
 
     app.setErrorHandler((error, request, reply) => {
