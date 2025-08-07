@@ -2,6 +2,7 @@ import fastifyJwt from "@fastify/jwt";
 import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import dotenv from 'dotenv';
 import registerRoutes from "@/infrastructure/http/routes.js";
+import setupSwagger from "./infrastructure/doc/swagger.js";
 
 dotenv.config({ path: './.env' });
 
@@ -23,5 +24,7 @@ server.decorate(
 );
 
 await registerRoutes(server);
+
+await setupSwagger(server);
 
 export default server;
