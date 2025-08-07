@@ -22,7 +22,8 @@ async function main() {
       ),
     ];
 
-    console.log(`Found ${words.length} words. Importing...`);
+    console.log(`Found ${words.length} words.`);
+    console.log(`Importing...`);
 
     await prisma.word.createMany({
       data: words.map((w) => ({ value: w })),
