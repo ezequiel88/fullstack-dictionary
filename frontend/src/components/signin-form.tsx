@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
-import { useToast } from "@/hooks/useToast";
+import { showToast, getErrorMessage } from "@/lib/toast";
 
 const signInSchema = z.object({
-    email: z.string().email("Invalid email address"),
+    email: z.email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -26,7 +26,6 @@ interface SignInFormProps {
 
 export const SignInForm = ({ onSuccess }: SignInFormProps) => {
     const { signIn, isLoading } = useAuth();
-    const { toast } = useToast();
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -43,12 +42,12 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
         try {
             const { email, password } = data;
             await signIn({ email, password });
-            toast({ title: "Welcome back!", description: "Login successful." });
+            showToast.auth.loginSuccess();
             reset();
             onSuccess();
         } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : "An error occurred";
-            toast({ title: "Error", description: errorMessage, variant: "destructive" });
+            const errorMessage = getErrorMessage(error);
+            showToast.auth.loginError(errorMessage);
         }
     };
 

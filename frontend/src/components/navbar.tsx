@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,9 +39,11 @@ export const Navbar = () => {
             <div className="container flex h-20 items-center justify-between px-4 mx-auto">
                 {/* Logo */}
                 <div className="flex items-center">
-                    <img
-                        src={"/logo.png"}
+                    <Image
+                        src="/logo.png"
                         alt="Logo Dictionary"
+                        width={40}
+                        height={40}
                         className="h-10 w-auto"
                     />
                 </div>

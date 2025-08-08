@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { clearHistory } from "@/actions";
 
 export function ClearHistoryButton() {
@@ -14,10 +14,10 @@ export function ClearHistoryButton() {
         startTransition(async () => {
             try {
                 await clearHistory();
-                toast.success("Histórico limpo com sucesso");
+                showToast.history.clearSuccess();
                 router.refresh();
             } catch {
-                toast.error("Erro ao limpar histórico");
+                showToast.history.clearError();
             }
         });
     };

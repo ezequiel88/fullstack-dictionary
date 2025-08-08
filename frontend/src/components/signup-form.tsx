@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
-import { useToast } from "@/hooks/useToast";
+import { showToast, getErrorMessage } from "@/lib/toast";
 
 const signUpSchema = z
     .object({
@@ -33,7 +33,6 @@ interface SignUpFormProps {
 
 export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
     const { signUp, isLoading } = useAuth();
-    const { toast } = useToast();
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -50,12 +49,12 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
         try {
             const { name, email, password } = data;
             await signUp({ name, email, password });
-            toast({ title: "Account created successfully!", description: "Welcome to Dictionary!" });
+            showToast.auth.signupSuccess();
             reset();
             onSuccess();
         } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : "An error occurred";
-            toast({ title: "Error", description: errorMessage, variant: "destructive" });
+            const errorMessage = getErrorMessage(error);
+            showToast.auth.signupError(errorMessage);
         }
     };
 

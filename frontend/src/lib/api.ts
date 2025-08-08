@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { getAuthToken } from "./auth";
 import { logoutAction } from "@/actions/logout";
