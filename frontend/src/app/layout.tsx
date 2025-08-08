@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("http://localhost:3000"),
   title: "Dictionary App - Dicionário Completo",
   description: "Aplicativo completo de dicionário com definições, pronúncia, favoritos e histórico. PWA que funciona offline com cache inteligente e instalação nativa.",
   applicationName: "Dictionary App",
