@@ -11,6 +11,7 @@ export default {
     '^.+\\.ts$': ['ts-jest', {
       useESM: true,
       tsconfig: {
+        target: 'es2022',
         module: 'esnext'
       }
     }]
@@ -28,5 +29,17 @@ export default {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
-  testTimeout: 10000
+  testTimeout: 10000,
+  
+  // Configurações para saída mais elegante
+  verbose: false,
+  silent: false,
+  
+  // Suprime logs desnecessários durante os testes
+  setupFiles: ['<rootDir>/tests/jest.setup.js'],
+  
+  // Configurações de display mais limpo
+  clearMocks: true,
+  restoreMocks: true,
+  resetMocks: true
 };

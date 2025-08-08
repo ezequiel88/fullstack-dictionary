@@ -7,6 +7,7 @@ describe('DictionaryService', () => {
   let dictionaryService: DictionaryService;
   let mockExternalDictionaryService: jest.Mocked<IDictionaryService>;
   let mockCacheService: jest.Mocked<ICacheService>;
+  let consoleWarnSpy: jest.SpyInstance;
 
   beforeEach(() => {
     mockExternalDictionaryService = {
@@ -21,7 +22,15 @@ describe('DictionaryService', () => {
       clear: jest.fn(),
     };
 
+    // Mock console.warn to suppress expected warning messages during tests
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
     dictionaryService = new DictionaryService(mockExternalDictionaryService, mockCacheService);
+  });
+
+  afterEach(() => {
+    // Restore console.warn after each test
+    consoleWarnSpy.mockRestore();
   });
 
   describe('searchWord', () => {
@@ -100,6 +109,7 @@ describe('DictionaryService', () => {
 
       expect(mockExternalDictionaryService.getWordDefinition).toHaveBeenCalledWith(word);
       expect(result).toEqual({ word: normalizedWordDefinition, fromCache: false });
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Cache get error for word:', word, expect.any(Error));
     });
 
     it('should handle cache set error gracefully', async () => {
@@ -110,6 +120,7 @@ describe('DictionaryService', () => {
       const result = await dictionaryService.searchWord(word);
 
       expect(result).toEqual({ word: normalizedWordDefinition, fromCache: false });
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Cache set error for word:', word, expect.any(Error));
     });
 
     it('should handle invalid cached JSON gracefully', async () => {
@@ -120,6 +131,7 @@ describe('DictionaryService', () => {
 
       expect(mockExternalDictionaryService.getWordDefinition).toHaveBeenCalledWith(word);
       expect(result).toEqual({ word: normalizedWordDefinition, fromCache: false });
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid JSON in cache for word:', word);
     });
   });
 
@@ -142,6 +154,7 @@ describe('DictionaryService', () => {
 
       expect(mockCacheService.delete).toHaveBeenCalledWith(`dictionary:word:${word}`);
       expect(result).toBe(false);
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Cache delete error for word:', word, expect.any(Error));
     });
   });
 });
