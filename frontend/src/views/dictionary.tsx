@@ -4,8 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FavoriteItem, HistoryItem, Word, WordDefinition, WordListResponse, WordSearchResponse } from "@/types";
-import api from "@/lib/api";
+import { FavoriteItem, HistoryItem, Word, WordDefinition, WordListResponse } from "@/types";
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import WordCard from "@/components/word-card";
@@ -15,6 +14,7 @@ import FavoritesTab from "@/components/favorites-tab";
 
 import { getHistory } from "@/actions/history";
 import { getFavorites, markAsFavorite, removeFavorite } from "@/actions/favorite";
+import { getWordsList, searchWord } from "@/actions/dictionary";
 import { showToast } from "@/lib/toast";
 
 
@@ -53,13 +53,18 @@ export default function Dictionary() {
 
     const fetchWord = useCallback(async (id: string) => {
         try {
-            const { data } = await api.get<WordSearchResponse>(`/entries/en/${id}`);
-            const wordData: WordDefinition = {
-                ...data.word,
-                id: data.id,
-                isFavorite: data.isFavorite
-            };
-            setWord(wordData);
+            const result = await searchWord(id);
+            if (result.success && result.data) {
+                const wordData: WordDefinition = {
+                    ...result.data.word,
+                    id: result.data.id,
+                    isFavorite: result.data.isFavorite
+                };
+                setWord(wordData);
+            } else {
+                showToast.dictionary.fetchWordError();
+                console.error("Erro ao buscar palavra:", result.message);
+            }
         } catch (error) {
             showToast.dictionary.fetchWordError();
             console.error("Erro ao buscar palavra:", error);
@@ -131,21 +136,24 @@ export default function Dictionary() {
             if (loading) return;
             setLoading(true);
 
-            const url =
-                query && !cursorToken
-                    ? `/entries/en?search=${query}`
-                    : cursorToken
-                        ? `/entries/en?limit=50&next=${cursorToken}${search.trim() ? `&search=${search.trim()}` : ""}`
-                        : "/entries/en?limit=50";
-
             try {
-                const { data } = await api.get<WordListResponse>(url);
+                const searchQuery = query || search.trim();
+                const result = await getWordsList({
+                    search: searchQuery || undefined,
+                    limit: 50,
+                    cursor: cursorToken
+                });
 
-                setWords((prev) => (append ? [...prev, ...data.results] : data.results));
-                setNextCursor(data.next || null);
+                if (result.success && result.data) {
+                    setWords((prev) => (append ? [...prev, ...result.data.results] : result.data.results));
+                    setNextCursor(result.data.next || null);
 
-                // Sempre atualizar a URL com o cursor atual, seja para nova busca ou scroll infinito
-                updateURL({ search: query ?? search, cursor: data.next ?? null });
+                    // Sempre atualizar a URL com o cursor atual, seja para nova busca ou scroll infinito
+                    updateURL({ search: searchQuery || undefined, cursor: result.data.next ?? undefined });
+                } else {
+                    showToast.dictionary.fetchWordsError();
+                    console.error("Erro ao buscar palavras:", result.message);
+                }
             } catch (error) {
                 showToast.dictionary.fetchWordsError();
                 console.error("Erro ao buscar palavras:", error);
@@ -202,8 +210,6 @@ export default function Dictionary() {
     }, [fetchWords]);
 
     const handleToggleFavorite = useCallback(async (wordDef: WordDefinition) => {
-        console.log('handleToggleFavorite called with:', { id: wordDef.id, word: wordDef.word, isFavorite: wordDef.isFavorite });
-        
         let success = false;
         
         if (wordDef.isFavorite) {

@@ -2,7 +2,7 @@
 "use server";
 
 import api from "@/lib/api";
-import { WordDefinition, WordListResponse, WordQueryParams, WordSearchResponse } from "@/types";
+import { WordListResponse, WordQueryParams, WordSearchResponse } from "@/types";
 
 export async function searchWord(word: string) {
   try {
@@ -35,7 +35,7 @@ export async function getWordsList(params?: WordQueryParams) {
       queryParams.append("limit", params.limit.toString());
     }
     if (params?.cursor) {
-      queryParams.append("cursor", params.cursor);
+      queryParams.append("next", params.cursor);
     }
 
     const url = `/entries/en${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;

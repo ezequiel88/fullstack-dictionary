@@ -5,7 +5,6 @@ import { Play, Pause, ArrowLeft, ArrowRight, Heart, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-
 import { WordDefinition } from "@/types";
 
 type Props = {
