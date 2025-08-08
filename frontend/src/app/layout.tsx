@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { PwaInstallBanner } from "@/components/pwa-banner";
+import { PwaNotifications } from "@/components/pwa-notifications";
+import { PwaProvider } from "@/components/pwa-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/context/authContext";
@@ -18,17 +20,30 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dictionary App",
-  description: "Words and definitions",
-  applicationName: "Dictionary",
+  title: "Dictionary App - Dicionário Completo",
+  description: "Aplicativo completo de dicionário com definições, favoritos e histórico. Funciona offline!",
+  applicationName: "Dictionary App",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Dictionary"
+    title: "Dictionary App",
+    startupImage: [
+      {
+        url: "/icon-512.png",
+        media: "(device-width: 768px) and (device-height: 1024px)"
+      }
+    ]
   },
   formatDetection: {
     telephone: false
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: "cover"
   },
   icons: {
     icon: [
@@ -36,31 +51,36 @@ export const metadata: Metadata = {
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
     ],
     apple: [
-      { url: "/apple-touch-icon.png" }
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
     ],
     other: [
-      { rel: "shortcut icon", url: "/favicon.ico" }
+      { rel: "shortcut icon", url: "/favicon.ico" },
+      { rel: "mask-icon", url: "/icon-192.png", color: "#3b82f6" }
     ]
   },
   openGraph: {
     type: "website",
-    title: "Dictionary App",
-    description: "Words and definitions",
-    siteName: "Dictionary",
+    title: "Dictionary App - Dicionário Completo",
+    description: "Aplicativo completo de dicionário com definições, favoritos e histórico. Funciona offline!",
+    siteName: "Dictionary App",
     url: "https://dictionary.com",
     images: [{ url: "https://dictionary.com/og.png" }]
   },
   twitter: {
-    card: "summary",
-    title: "Dictionary App",
-    description: "Words and definitions",
+    card: "summary_large_image",
+    title: "Dictionary App - Dicionário Completo",
+    description: "Aplicativo completo de dicionário com definições, favoritos e histórico. Funciona offline!",
     creator: "@ezequielTav",
     images: ["https://dictionary.com/og-twitter.png"],
     site: "https://dictionary.com"
   },
   other: {
     "mobile-web-app-capable": "yes",
-    "msapplication-tap-highlight": "no"
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "msapplication-TileColor": "#3b82f6",
+    "msapplication-tap-highlight": "no",
+    "theme-color": "#3b82f6"
   }
 };
 
@@ -75,6 +95,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <PwaProvider>
           <AuthProvider>
             <ThemeProvider
               attribute="class"
@@ -85,10 +106,12 @@ export default function RootLayout({
               <TooltipProvider>
                 {children}
                 <PwaInstallBanner />
+                <PwaNotifications />
                 <Toaster />
               </TooltipProvider>
             </ThemeProvider>
           </AuthProvider>
+        </PwaProvider>
       </body>
     </html>
   );

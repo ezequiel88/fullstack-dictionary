@@ -6,9 +6,17 @@ import type { NextRequest } from "next/server";
 const publicRoutes = ["/"];
 
 export async function middleware(req: NextRequest) {
+  const { nextUrl } = req;
+
+  // Permite service worker e outros arquivos PWA sem redirecionamento
+  if (nextUrl.pathname === "/sw.js" || 
+      nextUrl.pathname === "/offline.html" ||
+      nextUrl.pathname === "/manifest.json") {
+    return NextResponse.next();
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-  const { nextUrl } = req;
 
   const isPublicRoute = publicRoutes.some((route) =>
     nextUrl.pathname === route ||
@@ -32,6 +40,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api/auth/|_next/|favicon.ico|manifest.json|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)",
+    "/((?!api/auth/|_next/|favicon.ico|manifest.json|sw.js|offline.html|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)",
   ],
 };
