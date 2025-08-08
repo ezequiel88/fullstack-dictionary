@@ -18,7 +18,7 @@ export class AuthController {
       const exists = await userService.getUserByEmail(parsed.data.email);
 
       if (exists) {
-        return reply.code(400).send({ message: 'Email already exists' });
+        return reply.code(409).send({ message: 'Email já existe' });
       }
 
       const user = await userService.createUser(parsed.data);
@@ -36,7 +36,7 @@ export class AuthController {
       });
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 
@@ -53,13 +53,13 @@ export class AuthController {
       const user = await userService.getUserByEmail(parsed.data.email);
 
       if (!user) {
-        return reply.code(401).send({ message: 'Invalid credentials' });
+        return reply.code(401).send({ message: 'Credenciais inválidas' });
       }
 
       const isValid = await userService.validatePassword(parsed.data.password, user.password);
 
       if (!isValid) {
-        return reply.code(401).send({ message: 'Invalid credentials' });
+        return reply.code(401).send({ message: 'Credenciais inválidas' });
       }
 
       const token = await reply.jwtSign({ id: user.id, email: user.email });
@@ -76,7 +76,7 @@ export class AuthController {
       });
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 }

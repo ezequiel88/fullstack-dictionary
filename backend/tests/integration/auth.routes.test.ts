@@ -74,10 +74,10 @@ describe('Auth Routes', () => {
         payload: userData,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(409);
 
       const body = JSON.parse(response.body);
-      expect(body.message).toBe('Email already exists');
+      expect(body.message).toBe('Email já existe');
     });
 
     it('should validate required fields', async () => {
@@ -167,7 +167,7 @@ describe('Auth Routes', () => {
       expect(response.statusCode).toBe(401);
 
       const body = JSON.parse(response.body);
-      expect(body.message).toBe('Invalid credentials');
+      expect(body.message).toBe('Credenciais inválidas');
     });
 
     it('should return error for invalid password', async () => {
@@ -183,7 +183,7 @@ describe('Auth Routes', () => {
       expect(response.statusCode).toBe(401);
 
       const body = JSON.parse(response.body);
-      expect(body.message).toBe('Invalid credentials');
+      expect(body.message).toBe('Credenciais inválidas');
     });
 
     it('should validate required fields', async () => {

@@ -22,7 +22,7 @@ export class WordRepository implements IWordRepository {
 
     if (next) {
       const cursor = await prisma.word.findUnique({ where: { id: next } });
-      if (!cursor) throw new Error('Invalid next cursor');
+      if (!cursor) throw new Error('Cursor de próxima página inválido');
 
       words = await prisma.word.findMany({
         where: {
@@ -37,7 +37,7 @@ export class WordRepository implements IWordRepository {
       });
     } else if (previous) {
       const cursor = await prisma.word.findUnique({ where: { id: previous } });
-      if (!cursor) throw new Error('Invalid previous cursor');
+      if (!cursor) throw new Error('Cursor de página anterior inválido');
 
       words = await prisma.word.findMany({
         where: {

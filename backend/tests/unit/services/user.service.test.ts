@@ -51,9 +51,9 @@ describe('UserService', () => {
         password: 'hashedPassword123',
       };
 
-      mockUserRepository.create.mockRejectedValue(new Error('Email already exists'));
+      mockUserRepository.create.mockRejectedValue(new Error('Email já existe'));
 
-      await expect(userService.createUser(userData)).rejects.toThrow('Email already exists');
+      await expect(userService.createUser(userData)).rejects.toThrow('Email já existe');
     });
   });
 
@@ -157,9 +157,9 @@ describe('UserService', () => {
     it('should handle user deletion errors', async () => {
       const userId = 'user-id-123';
 
-      mockUserRepository.delete.mockRejectedValue(new Error('User not found'));
+      mockUserRepository.delete.mockRejectedValue(new Error('Usuário não encontrado'));
 
-      await expect(userService.deleteUser(userId)).rejects.toThrow('User not found');
+      await expect(userService.deleteUser(userId)).rejects.toThrow('Usuário não encontrado');
     });
   });
 });

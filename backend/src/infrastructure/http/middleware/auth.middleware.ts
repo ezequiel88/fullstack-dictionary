@@ -15,7 +15,7 @@ export class AuthMiddleware {
 
       if (!authHeader) {
         return reply.code(401).send({
-          message: 'Authorization header is required',
+          message: 'Cabeçalho de autorização é obrigatório',
         });
       }
 
@@ -23,7 +23,7 @@ export class AuthMiddleware {
 
       if (!token) {
         return reply.code(401).send({
-          message: 'Token is required',
+          message: 'Token é obrigatório',
         });
       }
 
@@ -31,7 +31,7 @@ export class AuthMiddleware {
       if (!jwtSecret) {
         request.log.error('JWT_SECRET is not configured');
         return reply.code(500).send({
-          message: 'Internal server error',
+          message: 'Erro interno do servidor',
         });
       }
 
@@ -41,12 +41,12 @@ export class AuthMiddleware {
       } catch (jwtError) {
         if (jwtError instanceof jwt.TokenExpiredError) {
           return reply.code(401).send({
-            message: 'Token has expired',
+            message: 'Token expirado',
           });
         }
         if (jwtError instanceof jwt.JsonWebTokenError) {
           return reply.code(401).send({
-            message: 'Invalid token',
+            message: 'Token inválido',
           });
         }
         throw jwtError;
@@ -54,7 +54,7 @@ export class AuthMiddleware {
 
       if (!decoded.userId) {
         return reply.code(401).send({
-          message: 'Invalid token payload',
+          message: 'Payload do token inválido',
         });
       }
 
@@ -64,7 +64,7 @@ export class AuthMiddleware {
 
       if (!user) {
         return reply.code(401).send({
-          message: 'User not found',
+          message: 'Usuário não encontrado',
         });
       }
 
@@ -77,7 +77,7 @@ export class AuthMiddleware {
     } catch (error) {
       request.log.error(error);
       return reply.code(500).send({
-        message: 'Internal server error',
+        message: 'Erro interno do servidor',
       });
     }
   }
@@ -85,7 +85,7 @@ export class AuthMiddleware {
   static generateToken(userId: string): string {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      throw new Error('JWT_SECRET is not configured');
+      throw new Error('JWT_SECRET não está configurado');
     }
 
     return jwt.sign(

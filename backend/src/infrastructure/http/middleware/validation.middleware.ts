@@ -14,14 +14,14 @@ export class ValidationMiddleware {
           }));
 
           return reply.code(400).send({
-            message: 'Validation error',
+            message: 'Erro de validação',
             errors: formattedErrors,
           });
         }
         
         request.log.error(error);
         return reply.code(500).send({
-          message: 'Internal server error',
+          message: 'Erro interno do servidor',
         });
       }
     };
@@ -39,14 +39,14 @@ export class ValidationMiddleware {
           }));
 
           return reply.code(400).send({
-            message: 'Invalid parameters',
+            message: 'Parâmetros inválidos',
             errors: formattedErrors,
           });
         }
         
         request.log.error(error);
         return reply.code(500).send({
-          message: 'Internal server error',
+          message: 'Erro interno do servidor',
         });
       }
     };
@@ -64,14 +64,14 @@ export class ValidationMiddleware {
           }));
 
           return reply.code(400).send({
-            message: 'Invalid query parameters',
+            message: 'Parâmetros de consulta inválidos',
             errors: formattedErrors,
           });
         }
         
         request.log.error(error);
         return reply.code(500).send({
-          message: 'Internal server error',
+          message: 'Erro interno do servidor',
         });
       }
     };

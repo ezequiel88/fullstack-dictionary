@@ -18,7 +18,7 @@ export class ErrorMiddleware {
       }));
 
       return reply.code(400).send({
-        message: 'Validation error',
+        message: 'Erro de validação',
         errors: formattedErrors,
       });
     }
@@ -29,62 +29,62 @@ export class ErrorMiddleware {
         case 'P2002':
           // Unique constraint violation
           const target = error.meta?.target as string[] | undefined;
-          const field = target?.[0] || 'field';
+          const field = target?.[0] || 'campo';
           return reply.code(409).send({
-            message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`,
+            message: `${field.charAt(0).toUpperCase() + field.slice(1)} já existe`,
           });
 
         case 'P2025':
           // Record not found
           return reply.code(404).send({
-            message: 'Record not found',
+            message: 'Registro não encontrado',
           });
 
         case 'P2003':
           // Foreign key constraint violation
           return reply.code(400).send({
-            message: 'Invalid reference to related record',
+            message: 'Referência inválida para registro relacionado',
           });
 
         case 'P2014':
           // Invalid ID
           return reply.code(400).send({
-            message: 'Invalid ID provided',
+            message: 'ID inválido fornecido',
           });
 
         default:
           return reply.code(500).send({
-            message: 'Database error occurred',
+            message: 'Erro de banco de dados ocorreu',
           });
       }
     }
 
     if (error instanceof Prisma.PrismaClientValidationError) {
       return reply.code(400).send({
-        message: 'Invalid data provided',
+        message: 'Dados inválidos fornecidos',
       });
     }
 
     // JWT errors
     if (error.name === 'JsonWebTokenError') {
       return reply.code(401).send({
-        message: 'Invalid token',
+        message: 'Token inválido',
       });
     }
 
     if (error.name === 'TokenExpiredError') {
       return reply.code(401).send({
-        message: 'Token has expired',
+        message: 'Token expirado',
       });
     }
 
     // Fastify validation errors
     if (error.validation) {
       return reply.code(400).send({
-        message: 'Validation error',
+        message: 'Erro de validação',
         errors: error.validation.map(err => ({
           field: err.instancePath.replace('/', ''),
-          message: err.message || 'Invalid value',
+          message: err.message || 'Valor inválido',
         })),
       });
     }
@@ -92,19 +92,19 @@ export class ErrorMiddleware {
     // HTTP errors
     if (error.statusCode) {
       return reply.code(error.statusCode).send({
-        message: error.message || 'An error occurred',
+        message: error.message || 'Ocorreu um erro',
       });
     }
 
     // Default error
     return reply.code(500).send({
-      message: 'Internal server error',
+      message: 'Erro interno do servidor',
     });
   }
 
   static async handleNotFound(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     return reply.code(404).send({
-      message: `Route ${request.method} ${request.url} not found`,
+      message: `Rota ${request.method} ${request.url} não encontrada`,
     });
   }
 }

@@ -79,7 +79,7 @@ describe('UserController', () => {
 
       expect(mockReply.code).toHaveBeenCalledWith(404);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'User not found',
+        message: 'Usuário não encontrado',
       });
     });
   });
@@ -197,7 +197,7 @@ describe('UserController', () => {
       expect(mockWordRepository.findById).toHaveBeenCalledWith('word-id-123');
       expect(mockReply.code).toHaveBeenCalledWith(404);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Word not found',
+        message: 'Palavra não encontrada',
       });
     });
   });
@@ -257,7 +257,7 @@ describe('UserController', () => {
       expect(mockWordRepository.findById).toHaveBeenCalledWith('word-id-123');
       expect(mockReply.code).toHaveBeenCalledWith(404);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Word not found',
+        message: 'Palavra não encontrada',
       });
     });
   });

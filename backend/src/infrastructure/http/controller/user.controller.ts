@@ -8,14 +8,14 @@ export class UserController {
     try {
       const userId = (request as FastifyCustomRequest).user.id;
       if (!userId) {
-        return reply.code(401).send({ message: 'Unauthorized' });
+        return reply.code(401).send({ message: 'Não autorizado' });
       }
 
       const userService = UserController.container.userService;
       const user = await userService.getUserById(userId);
 
       if (!user) {
-        return reply.code(404).send({ message: 'User not found' });
+        return reply.code(404).send({ message: 'Usuário não encontrado' });
       }
 
       // Remove password from response
@@ -23,7 +23,7 @@ export class UserController {
       return reply.send(userWithoutPassword);
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 
@@ -37,7 +37,7 @@ export class UserController {
       return reply.send(history);
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 
@@ -50,7 +50,7 @@ export class UserController {
       return reply.send(favorites);
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 
@@ -64,7 +64,7 @@ export class UserController {
 
       const dbWord = await wordRepository.findById(wordId);
       if (!dbWord) {
-        return reply.code(404).send({ message: 'Word not found' });
+        return reply.code(404).send({ message: 'Palavra não encontrada' });
       }
 
       // Usar upsert para criar ou retornar o favorito existente
@@ -79,7 +79,7 @@ export class UserController {
       });
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 
@@ -93,13 +93,13 @@ export class UserController {
 
       const dbWord = await wordRepository.findById(wordId);
       if (!dbWord) {
-        return reply.code(404).send({ message: 'Word not found' });
+        return reply.code(404).send({ message: 'Palavra não encontrada' });
       }
 
       // Verificar se o favorito existe antes de tentar deletar
       const existingFavorite = await favoriteRepository.findByUserAndWord(userId, dbWord.id);
       if (!existingFavorite) {
-        return reply.code(404).send({ message: 'Favorite not found' });
+        return reply.code(404).send({ message: 'Favorito não encontrado' });
       }
 
       await favoriteRepository.delete(userId, dbWord.id);
@@ -107,7 +107,7 @@ export class UserController {
       return reply.code(204).send();
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 }

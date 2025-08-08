@@ -3,12 +3,8 @@ import { getAuthToken } from "./auth";
 import { logoutAction } from "@/actions/logout";
 import { redirect } from "next/navigation";
 
-const isServer = typeof window === "undefined";
-
 // Seleção dinâmica de baseURL
-const baseURL = isServer
-  ? process.env.API_URL || "http://localhost:3030"
-  : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030";
+const baseURL = process.env.API_URL || "http://localhost:3030"
 
 const api: AxiosInstance = axios.create({
   baseURL,

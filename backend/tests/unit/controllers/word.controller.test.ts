@@ -180,7 +180,7 @@ describe('WordController', () => {
 
       expect(mockReply.code).toHaveBeenCalledWith(404);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Word not found',
+        message: 'Palavra não encontrada',
       });
     });
 
@@ -207,7 +207,7 @@ describe('WordController', () => {
 
       expect(mockReply.code).toHaveBeenCalledWith(404);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Word not found in dictionary',
+        message: 'Palavra não encontrada no dicionário',
       });
     });
 
@@ -277,7 +277,7 @@ describe('WordController', () => {
 
       expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Internal server error',
+        message: 'Erro interno do servidor',
       });
     });
   });

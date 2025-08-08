@@ -14,7 +14,7 @@ export class WordController {
       return reply.send(response);
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 
@@ -31,12 +31,12 @@ export class WordController {
 
       const dbWord = await wordRepository.findById(wordId);
       if (!dbWord) {
-        return reply.code(404).send({ message: 'Word not found' });
+        return reply.code(404).send({ message: 'Palavra não encontrada' });
       }
 
       const result = await dictionaryService.searchWord(dbWord.value);
       if (!result) {
-        return reply.code(404).send({ message: 'Word not found in dictionary' });
+        return reply.code(404).send({ message: 'Palavra não encontrada no dicionário' });
       }
 
       // Add to history
@@ -54,7 +54,7 @@ export class WordController {
         });
     } catch (error) {
       request.log.error(error);
-      return reply.code(500).send({ message: 'Internal server error' });
+      return reply.code(500).send({ message: 'Erro interno do servidor' });
     }
   };
 }

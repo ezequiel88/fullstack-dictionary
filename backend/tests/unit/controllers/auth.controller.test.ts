@@ -125,7 +125,7 @@ describe('AuthController', () => {
       expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Internal server error',
+        message: 'Erro interno do servidor',
       });
     });
 
@@ -142,7 +142,7 @@ describe('AuthController', () => {
 
       expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Internal server error',
+        message: 'Erro interno do servidor',
       });
     });
   });
@@ -222,7 +222,7 @@ describe('AuthController', () => {
       expect(mockUserService.validatePassword).not.toHaveBeenCalled();
       expect(mockReply.code).toHaveBeenCalledWith(401);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Invalid credentials',
+        message: 'Credenciais inválidas',
       });
     });
 
@@ -258,7 +258,7 @@ describe('AuthController', () => {
       expect(mockUserService.validatePassword).toHaveBeenCalledWith('wrongpassword', 'hashedPassword123');
       expect(mockReply.code).toHaveBeenCalledWith(401);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Invalid credentials',
+        message: 'Credenciais inválidas',
       });
     });
 
@@ -285,7 +285,7 @@ describe('AuthController', () => {
       expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith({
-        message: 'Internal server error',
+        message: 'Erro interno do servidor',
       });
     });
   });

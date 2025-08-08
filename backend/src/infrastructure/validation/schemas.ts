@@ -3,81 +3,81 @@ import { z } from 'zod';
 // Auth schemas
 export const signUpSchema = z.object({
   name: z.string()
-    .min(2, 'Name must be at least 2 characters long')
-    .max(100, 'Name must be at most 100 characters long')
-    .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
+    .min(2, 'Nome deve ter pelo menos 2 caracteres')
+    .max(100, 'Nome deve ter no máximo 100 caracteres')
+    .regex(/^[a-zA-Z\s]+$/, 'Nome pode conter apenas letras e espaços'),
   email: z
-    .email('Invalid email format')
-    .max(255, 'Email must be at most 255 characters long'),
+    .email('Formato de email inválido')
+    .max(255, 'Email deve ter no máximo 255 caracteres'),
   password: z.string()
-    .min(6, 'Password must be at least 6 characters long')
-    .max(100, 'Password must be at most 100 characters long')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
+    .min(6, 'Senha deve ter pelo menos 6 caracteres')
+    .max(100, 'Senha deve ter no máximo 100 caracteres')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Senha deve conter pelo menos uma letra minúscula, uma maiúscula e um número'),
 });
 
 export const signInSchema = z.object({
   email: z
-    .email('Invalid email format')
-    .max(255, 'Email must be at most 255 characters long'),
+    .email('Formato de email inválido')
+    .max(255, 'Email deve ter no máximo 255 caracteres'),
   password: z.string()
-    .min(1, 'Password is required')
-    .max(100, 'Password must be at most 100 characters long'),
+    .min(1, 'Senha é obrigatória')
+    .max(100, 'Senha deve ter no máximo 100 caracteres'),
 });
 
 // User schemas
 export const updateUserSchema = z.object({
   name: z.string()
-    .min(2, 'Name must be at least 2 characters long')
-    .max(100, 'Name must be at most 100 characters long')
-    .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces')
+    .min(2, 'Nome deve ter pelo menos 2 caracteres')
+    .max(100, 'Nome deve ter no máximo 100 caracteres')
+    .regex(/^[a-zA-Z\s]+$/, 'Nome pode conter apenas letras e espaços')
     .optional(),
   email: z.string()
-    .email('Invalid email format')
-    .max(255, 'Email must be at most 255 characters long')
+    .email('Formato de email inválido')
+    .max(255, 'Email deve ter no máximo 255 caracteres')
     .optional(),
 });
 
 // Word schemas
 export const wordIdSchema = z.object({
   wordId: z.string()
-    .uuid('Invalid word ID format'),
+    .uuid('Formato de ID da palavra inválido'),
 });
 
 export const wordQuerySchema = z.object({
   search: z.string()
-    .min(1, 'Search term is required')
-    .max(100, 'Search term must be at most 100 characters long')
-    .regex(/^[a-zA-Z\s-']+$/, 'Search term can only contain letters, spaces, hyphens, and apostrophes')
+    .min(1, 'Termo de busca é obrigatório')
+    .max(100, 'Termo de busca deve ter no máximo 100 caracteres')
+    .regex(/^[a-zA-Z\s-']+$/, 'Termo de busca pode conter apenas letras, espaços, hífens e apostrofes')
     .optional(),
   limit: z.string()
-    .regex(/^\d+$/, 'Limit must be a number')
+    .regex(/^\d+$/, 'Limite deve ser um número')
     .transform(Number)
-    .refine(val => val >= 1 && val <= 100, 'Limit must be between 1 and 100')
+    .refine(val => val >= 1 && val <= 100, 'Limite deve estar entre 1 e 100')
     .optional()
     .default(20),
   page: z.string()
-    .regex(/^\d+$/, 'Page must be a number')
+    .regex(/^\d+$/, 'Página deve ser um número')
     .transform(Number)
-    .refine(val => val >= 1, 'Page must be at least 1')
+    .refine(val => val >= 1, 'Página deve ser pelo menos 1')
     .optional()
     .default(1),
   cursor: z.string()
-    .uuid('Invalid cursor format')
+    .uuid('Formato de cursor inválido')
     .optional(),
 });
 
 // Pagination schemas
 export const paginationQuerySchema = z.object({
   limit: z.string()
-    .regex(/^\d+$/, 'Limit must be a number')
+    .regex(/^\d+$/, 'Limite deve ser um número')
     .transform(Number)
-    .refine(val => val >= 1 && val <= 100, 'Limit must be between 1 and 100')
+    .refine(val => val >= 1 && val <= 100, 'Limite deve estar entre 1 e 100')
     .optional()
     .default(20),
   page: z.string()
-    .regex(/^\d+$/, 'Page must be a number')
+    .regex(/^\d+$/, 'Página deve ser um número')
     .transform(Number)
-    .refine(val => val >= 1, 'Page must be at least 1')
+    .refine(val => val >= 1, 'Página deve ser pelo menos 1')
     .optional()
     .default(1),
 });
