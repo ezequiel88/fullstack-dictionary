@@ -4,7 +4,7 @@ import { UserCreate } from '../infrastructure/types/user.js';
 import { IUserRepository } from '../domain/repositories/user.repository.interface.js';
 
 export class UserService {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private userRepository: IUserRepository) { }
 
   async createUser(user: UserCreate): Promise<User> {
     const hashedPassword = await bcrypt.hash(user.password, 10);

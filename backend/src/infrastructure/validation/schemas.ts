@@ -6,7 +6,7 @@ export const signUpSchema = z.object({
     .min(2, 'Name must be at least 2 characters long')
     .max(100, 'Name must be at most 100 characters long')
     .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
-  email: z.string()
+  email: z
     .email('Invalid email format')
     .max(255, 'Email must be at most 255 characters long'),
   password: z.string()
@@ -16,7 +16,7 @@ export const signUpSchema = z.object({
 });
 
 export const signInSchema = z.object({
-  email: z.string()
+  email: z
     .email('Invalid email format')
     .max(255, 'Email must be at most 255 characters long'),
   password: z.string()

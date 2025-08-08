@@ -30,14 +30,14 @@ export function build(opts = {}): FastifyInstance {
 
   // Register CORS
   server.register(fastifyCors);
-
-  // Setup Swagger (only in non-test environment)
-  if (process.env.NODE_ENV !== 'test') {
-    server.register(setupSwagger);
-  }
-
   // Register routes
   server.register(registerRoutes);
+  // Setup Swagger BEFORE routes (only in non-test environment)
+  // if (process.env.NODE_ENV !== 'test') {
+    server.register(setupSwagger);
+  // }
+
+
 
   return server;
 }

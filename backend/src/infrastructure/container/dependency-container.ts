@@ -7,13 +7,13 @@ import { ExternalDictionaryService } from '../services/external-dictionary.servi
 
 export class DependencyContainer {
   private static instance: DependencyContainer;
-  
+
   // Repositories
   private _userRepository: UserRepository;
   private _wordRepository: WordRepository;
   private _favoriteRepository: FavoriteRepository;
   private _historyRepository: HistoryRepository;
-  
+
   // Services
   private _cacheService: CacheService;
   private _externalDictionaryService: ExternalDictionaryService;
@@ -26,7 +26,7 @@ export class DependencyContainer {
     this._wordRepository = new WordRepository();
     this._favoriteRepository = new FavoriteRepository();
     this._historyRepository = new HistoryRepository();
-    
+
     // Initialize services
     this._cacheService = new CacheService();
     this._externalDictionaryService = new ExternalDictionaryService();

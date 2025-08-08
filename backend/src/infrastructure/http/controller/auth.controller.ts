@@ -7,10 +7,11 @@ export class AuthController {
 
   static signUp = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     try {
+      // Additional Zod validation for better error messages
       const parsed = signUpSchema.safeParse(request.body);
 
       if (!parsed.success) {
-        return reply.code(400).send({ message: parsed.error.message });
+        return reply.code(400).send({ message: parsed.error.issues[0].message });
       }
 
       const userService = AuthController.container.userService;
@@ -41,10 +42,11 @@ export class AuthController {
 
   static signIn = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     try {
+      // Additional Zod validation for better error messages
       const parsed = signInSchema.safeParse(request.body);
 
       if (!parsed.success) {
-        return reply.code(400).send({ message: parsed.error.message });
+        return reply.code(400).send({ message: parsed.error.issues[0].message });
       }
 
       const userService = AuthController.container.userService;

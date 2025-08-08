@@ -1,0 +1,571 @@
+openapi: 3.1.0
+info:
+  title: Fullstack Challenge - Dictionary API
+  description: API for Fullstack Challenge - Dictionary (by Coodesh)
+  version: 1.0.0
+  contact:
+    name: Ezequiel Tavares
+    url: https://github.com/ezequiel88
+
+servers:
+  - url: http://localhost:3030
+    description: Local Server
+
+tags:
+  - name: Home
+    description: API root endpoint
+  - name: Auth
+    description: Authentication endpoints
+  - name: Words
+    description: Word endpoints
+  - name: Favorites
+    description: Favorite endpoints
+  - name: History
+    description: History endpoints
+  - name: User
+    description: User endpoints
+
+paths:
+  /:
+    get:
+      summary: API Home
+      tags: [Home]
+      responses:
+        "200":
+          description: Welcome message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Fullstack Challenge 🏅 - Dictionary"
+
+  /auth/signin:
+    post:
+      summary: Sign in a user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLoginResponse"
+        "400":
+          description: Invalid request
+          content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+        "401":
+          description: Unauthorized
+          content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+        "500":
+          description: Server error
+          content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+
+  /auth/signup:
+    post:
+      summary: Sign up a new user
+      description: Create a new user account
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "200":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLoginResponse"
+        "400":
+          description: Invalid request
+          content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+        "500":
+          description: Server error
+          content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+
+  # ==== USER (rotas explícitas /user/me...) ====
+  /user/me:
+    get:
+      summary: Get user profile
+      description: Retrieve the authenticated user's profile information
+      tags: [User]
+      security: [ { bearerAuth: [] } ]
+      responses:
+        "200":
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/me/history:
+    get:
+      summary: Get user words history
+      description: Retrieve the list of words that the user has searched for
+      tags: [History]
+      security: [ { bearerAuth: [] } ]
+      responses:
+        "200":
+          description: User history retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/History"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/me/favorites:
+    get:
+      summary: Get user favorite words
+      description: Retrieve the list of words that the user has marked as favorites
+      tags: [Favorites]
+      security: [ { bearerAuth: [] } ]
+      responses:
+        "200":
+          description: Favorites list retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Favorites"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/me/{wordId}/favorite:
+    post:
+      summary: Mark word as favorite
+      description: Add a word to the user's favorites list
+      tags: [Favorites]
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: wordId
+          in: path
+          required: true
+          description: Unique identifier of the word to mark as favorite
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: Word marked as favorite successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Favorite"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Word not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/me/{wordId}/unfavorite:
+    delete:
+      summary: Unmark word as favorite
+      description: Remove a word from the user's favorites list
+      tags: [Favorites]
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: wordId
+          in: path
+          required: true
+          description: Unique identifier of the word to remove from favorites
+          schema: 
+            type: string
+      responses:
+        "204":
+          description: Word removed from favorites successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Word not found in favorites
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ==== WORDS (rotas explícitas /entries/en...) ====
+  /entries/en:
+    get:
+      summary: Get words list
+      description: Retrieve a paginated list of words with optional search functionality
+      tags: [Words]
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: search
+          in: query
+          description: Search term to filter words
+          schema: 
+            type: string
+        - name: limit
+          in: query
+          description: Number of words to return per page
+          schema: 
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 100
+        - name: next
+          in: query
+          description: Cursor for next page pagination
+          schema: 
+            type: string
+        - name: previous
+          in: query
+          description: Cursor for previous page pagination
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: Words list retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WordList"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /entries/en/{wordId}:
+    get:
+      summary: Get word information
+      description: Retrieve detailed information about a specific word including definitions, phonetics, and examples
+      tags: [Words]
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: wordId
+          in: path
+          required: true
+          description: Unique identifier of the word
+          schema: 
+            type: string
+      responses:
+        "200":
+          description: Word information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WordDefinition"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Word not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message: { type: string }
+      required: [message]
+
+    FavoriteRequest:
+      type: object
+      properties:
+        wordId: { type: string }
+      required: [wordId]
+
+    Favorite:
+      type: object
+      properties:
+        id: { type: string, format: ulid }
+        userId: { type: string, format: ulid }
+        wordId: { type: string, format: ulid }
+      required: [id, userId, wordId]
+
+    Favorites:
+      type: array
+      items:
+        $ref: "#/components/schemas/Favorite"
+
+    History:
+      type: array
+      items:
+        type: object
+        properties:
+          id: { type: string, format: ulid }
+          userId: { type: string, format: ulid }
+          wordId: { type: string, format: ulid }
+        required: [id, userId, wordId]
+
+    User:
+      type: object
+      properties:
+        id: { type: string, format: ulid }
+        name: { type: string }
+        email: { type: string, format: email }
+        createdAt: { type: string, format: date-time }
+      required: [id, name, email, createdAt]
+
+    UserCreate:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 6 }
+      required: [name, email, password]
+
+    UserLogin:
+      type: object
+      properties:
+        email: { type: string, format: email, description: User email }
+        password: { type: string, minLength: 6, description: User password }
+      required: [email, password]
+
+    UserLoginResponse:
+      type: object
+      properties:
+        message: { type: string, description: Success message }
+        user: { $ref: "#/components/schemas/User" }
+        token: { type: string, description: JWT Token }
+      required: [message, user, token]
+
+    WordList:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: ulid }
+              value: { type: string }
+            required: [id, value]
+        totalDocs: { type: integer }
+        previous: { type: string, format: ulid, nullable: true }
+        next: { type: string, format: ulid, nullable: true }
+        hasNext: { type: boolean }
+        hasPrev: { type: boolean }
+      required: [results, totalDocs, hasNext, hasPrev]
+
+    WordDefinition:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: ulid
+          description: Unique identifier for the word
+        isFavorite: 
+          type: boolean
+          description: Whether the word is marked as favorite by the current user
+        word: 
+          type: string
+          description: The word itself
+        phonetic: 
+          type: string
+          nullable: true
+          description: Main phonetic transcription of the word
+        phonetics:
+          type: array
+          description: Array of phonetic transcriptions with audio
+          items:
+            type: object
+            properties:
+              text: 
+                type: string
+                nullable: true
+                description: Phonetic transcription text
+              audio: 
+                type: string
+                nullable: true
+                description: URL to audio pronunciation
+              sourceUrl: 
+                type: string
+                nullable: true
+                description: Source URL for the phonetic data
+              license:
+                type: object
+                nullable: true
+                properties:
+                  name: 
+                    type: string
+                    description: License name
+                  url: 
+                    type: string
+                    format: uri
+                    description: License URL
+                required: [name, url]
+        meanings:
+          type: array
+          description: Array of word meanings by part of speech
+          items:
+            type: object
+            properties:
+              partOfSpeech: 
+                type: string
+                description: Part of speech (noun, verb, adjective, etc.)
+              definitions:
+                type: array
+                description: Array of definitions for this part of speech
+                items:
+                  type: object
+                  properties:
+                    definition: 
+                      type: string
+                      description: The definition text
+                    example: 
+                      type: string
+                      nullable: true
+                      description: Example usage of the word
+                    synonyms: 
+                      type: array
+                      items: 
+                        type: string
+                      description: List of synonyms
+                    antonyms: 
+                      type: array
+                      items: 
+                        type: string
+                      description: List of antonyms
+                  required: [definition]
+              synonyms: 
+                type: array
+                items: 
+                  type: string
+                description: Synonyms for this part of speech
+              antonyms: 
+                type: array
+                items: 
+                  type: string
+                description: Antonyms for this part of speech
+            required: [partOfSpeech, definitions]
+        license:
+          type: object
+          nullable: true
+          description: License information for the word data
+          properties:
+            name: 
+              type: string
+              description: License name
+            url: 
+              type: string
+              format: uri
+              description: License URL
+          required: [name, url]
+        sourceUrls:
+          type: array
+          description: Source URLs for the word data
+          items: 
+            type: string
+            format: uri
+      required: [id, word, meanings]
+
+security:
+  - bearerAuth: []

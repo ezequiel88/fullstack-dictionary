@@ -12,7 +12,7 @@ export class DictionaryService {
   constructor(
     private externalDictionaryService: IDictionaryService,
     private cacheService: ICacheService
-  ) {}
+  ) { }
 
   async getWordDictionary(word: string): Promise<DictionaryResponse | null> {
     try {
@@ -57,18 +57,18 @@ export class DictionaryService {
     // Cache the result
     try {
       await this.cacheService.set(
-        cacheKey, 
+        cacheKey,
         JSON.stringify(wordNormalized),
-        3600 // 1 hour TTL
+        3600 // 1 hora
       );
     } catch (cacheError) {
       // Cache set error, continue without caching
       console.warn('Cache set error for word:', word, cacheError);
     }
 
-    return { 
-      word: wordNormalized, 
-      fromCache: false 
+    return {
+      word: wordNormalized,
+      fromCache: false
     };
   }
 

@@ -5,21 +5,7 @@ import wordRoutes from "./routes/word.route.js";
 
 const registerRoutes = async (app: FastifyInstance) => {
 
-    app.get("/", {
-        schema: {
-            summary: "Welcome message",
-            tags: ["Home"],
-            response: {
-                200: {
-                    type: "object",
-                    properties: {
-                        message: { type: "string" }
-                    },
-                    required: ["message"]
-                }
-            }
-        }
-    }, (request, reply) => {
+    app.get("/", (request, reply) => {
         reply.send({ message: "Fullstack Challenge 🏅 - Dictionary" });
     });
 

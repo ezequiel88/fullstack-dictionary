@@ -1,17 +1,14 @@
 import { FastifyInstance } from "fastify";
 import { UserController } from "../controller/user.controller.js";
-import { getFavoritesSchema, getHistorySchema, getProfileSchema, markFavoriteSchema, unmarkFavoriteSchema } from "../../swagger/definitions/user.js";
-
 
 const userRoutes = async (app: FastifyInstance) => {
     app.addHook("preValidation", app.authenticate);
 
-    app.get("/me", { schema: getProfileSchema }, UserController.getProfile);
-    app.get("/me/history", { schema: getHistorySchema }, UserController.getHistory);
-    app.get("/me/favorites", { schema: getFavoritesSchema }, UserController.getFavorites);
-    app.post("/me/:wordId/favorite", { schema: markFavoriteSchema }, UserController.markFavorite);
-    app.delete("/me/:wordId/unfavorite", { schema: unmarkFavoriteSchema }, UserController.unmarkFavorite);
-
+    app.get("/me", UserController.getProfile);
+    app.get("/me/history", UserController.getHistory);
+    app.get("/me/favorites", UserController.getFavorites);
+    app.post("/me/:wordId/favorite", UserController.markFavorite);
+    app.delete("/me/:wordId/unfavorite", UserController.unmarkFavorite);
 };
 
 export default userRoutes;
