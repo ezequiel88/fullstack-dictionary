@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -9,12 +10,12 @@ import api from "@/lib/api";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
 import WordCard from "@/components/word-card";
 
 import { getHistory } from "@/actions/history";
 import { getFavorites, markAsFavorite, removeFavorite } from "@/actions/favorite";
 import { showToast } from "@/lib/toast";
+
 
 export default function Dictionary() {
     const router = useRouter();
@@ -54,7 +55,7 @@ export default function Dictionary() {
         try {
             const { data } = await api.get<WordDefinition>(`/entries/en/${id}`);
             setWord(data);
-            console.log(data);
+            console.log("Word data:", data);
         } catch (error) {
             showToast.dictionary.fetchWordError();
             console.error("Erro ao buscar palavra:", error);
@@ -193,23 +194,17 @@ export default function Dictionary() {
         return () => observer.disconnect();
     }, [nextCursor, loading, fetchWords]);
 
-    const handleToggleFavorite = (word: WordDefinition) => {
-        if (word.isFavorite) {
-            setWord((prev) =>
-                prev
-                    ? { ...prev, isFavorite: false }
-                    : prev
-            );
-            unmarkFavorite(word.id);
+    const handleToggleFavorite = useCallback(async (wordDef: WordDefinition) => {
+        if (wordDef.isFavorite) {
+            await unmarkFavorite(wordDef.id);
         } else {
-            setWord((prev) =>
-                prev
-                    ? { ...prev, isFavorite: true }
-                    : prev
-            );
-            markFavorite(word.id);
+            await markFavorite(wordDef.id);
         }
-    };
+        // Atualizar o estado da palavra atual se for a mesma
+        if (word && word.id === wordDef.id) {
+            setWord({ ...word, isFavorite: !wordDef.isFavorite });
+        }
+    }, [word, markFavorite, unmarkFavorite]);
 
 
     return (
@@ -287,15 +282,17 @@ export default function Dictionary() {
                                                 </div>
                                             ) : (
                                                 history.map((item, index) => (
-                                                    <Button
-                                                        key={index}
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => fetchWord(item.word.id)}
-                                                        className="h-12 bg-accent text-word-button-foreground font-normal"
-                                                    >
-                                                        {item.word.value}
-                                                    </Button>
+                                                    item.word && (
+                                                        <Button
+                                                            key={index}
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => fetchWord(item.word!.id)}
+                                                            className="h-12 bg-accent text-word-button-foreground font-normal"
+                                                        >
+                                                            {item.word.value}
+                                                        </Button>
+                                                    )
                                                 ))
                                             )}
                                         </div>
@@ -311,15 +308,17 @@ export default function Dictionary() {
                                                 </div>
                                             ) : (
                                                 favorites.map((favorite, index) => (
-                                                    <Button
-                                                        key={index}
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => fetchWord(favorite.word.id)}
-                                                        className="h-12 bg-accent text-word-button-foreground font-normal"
-                                                    >
-                                                        {favorite.word.value}
-                                                    </Button>
+                                                    favorite.word && (
+                                                        <Button
+                                                            key={index}
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => fetchWord(favorite.word!.id)}
+                                                            className="h-12 bg-accent text-word-button-foreground font-normal"
+                                                        >
+                                                            {favorite.word.value}
+                                                        </Button>
+                                                    )
                                                 ))
                                             )}
                                         </div>

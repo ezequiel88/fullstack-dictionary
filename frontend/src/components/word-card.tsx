@@ -6,23 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 
-interface NormalizedMeaning {
-    partOfSpeech: string;
-    definition: string;
-}
-interface NormalizedWord {
-    id: string;
-    isFavorite: boolean;
-    word: string;
-    phonetic: string;
-    audios: { text?: string; audio: string }[];
-    meanings: NormalizedMeaning[];
-    synonyms: string[];
-}
+import { WordDefinition } from "@/types";
 
 type Props = {
-    word: NormalizedWord | null;
-    onToggleFavorite: (word: NormalizedWord) => void;
+    word: WordDefinition | null;
+    onToggleFavorite: (word: WordDefinition) => void;
 };
 
 export default function WordCard({ word, onToggleFavorite }: Props) {
@@ -75,14 +63,14 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
 
     const handleNextMeaning = () =>
         setCurrentMeaningIndex((prev) =>
-            prev + 1 < word.meanings.length ? prev + 1 : 0
+            prev + 1 < (word.meanings?.length || 0) ? prev + 1 : 0
         );
     const handlePreviousMeaning = () =>
         setCurrentMeaningIndex((prev) =>
-            prev - 1 >= 0 ? prev - 1 : word.meanings.length - 1
+            prev - 1 >= 0 ? prev - 1 : (word.meanings?.length || 1) - 1
         );
 
-    const currentMeaning = word.meanings[currentMeaningIndex];
+    const currentMeaning = word.meanings?.[currentMeaningIndex];
 
     return (
         <div className="space-y-6">
@@ -108,7 +96,7 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
 
 
             {/* Audio Player - um botão por áudio */}
-            {word.audios.map((audio, index) => (
+            {word.phonetics?.filter(p => p.audio).map((phonetic, index) => (
                 <div
                     key={index}
                     className="flex items-center justify-center gap-4 px-6 mt-4"
@@ -116,7 +104,7 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handlePlay(index, audio.audio)}
+                        onClick={() => handlePlay(index, phonetic.audio!)}
                         className="w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                         {playingIndex === index ? (
@@ -125,7 +113,7 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
                             <Play className="h-6 w-6" />
                         )}
                     </Button>
-                    {audio.text && <span>{audio.text}</span>}
+                    {phonetic.text && <span>{phonetic.text}</span>}
                     <div className="flex-1 max-w-md">
                         <div className="h-2 bg-muted rounded-full overflow-hidden">
                             <div
@@ -145,19 +133,28 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
                             {currentMeaning.partOfSpeech || "Meaning"}
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                            {currentMeaning.definition ?? "No definition"}
+                            {currentMeaning?.definitions?.[0]?.definition ?? "No definition"}
                         </p>
-
-                        {word.synonyms.length > 0 && (
+                        
+                        {currentMeaning?.definitions?.[0]?.example && (
                             <>
-                                <h2 className="font-semibold mt-4">Synonyms</h2>
-                                <p className="text-muted-foreground mb-4">
-                                    {word.synonyms.join(", ")}
+                                <h2 className="font-semibold mt-4">Example</h2>
+                                <p className="text-muted-foreground mb-4 italic">
+                                    {currentMeaning?.definitions?.[0]?.example}
                                 </p>
                             </>
                         )}
 
-                        {word.meanings.length > 1 && (
+                        {currentMeaning?.synonyms && currentMeaning.synonyms.length > 0 && (
+                            <>
+                                <h2 className="font-semibold mt-4">Synonyms</h2>
+                                <p className="text-muted-foreground mb-4">
+                                    {currentMeaning?.synonyms?.join(", ")}
+                                </p>
+                            </>
+                        )}
+
+                        {word.meanings && word.meanings.length > 1 && (
                             <div className="space-x-4 mt-6 mb-2">
                                 <Button
                                     variant="outline"
