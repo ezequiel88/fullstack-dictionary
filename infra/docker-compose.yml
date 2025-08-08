@@ -60,7 +60,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      API_URL: "http://localhost:3030"
+      API_URL: "http://backend:3030"
+      NEXT_PUBLIC_API_URL: "http://localhost:3030"
       NODE_ENV: production
     depends_on:
       - backend

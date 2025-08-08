@@ -17,7 +17,7 @@ npx prisma generate
 
 # Import words if the words table is empty
 echo "Checking if words need to be imported..."
-WORD_COUNT=$(echo "SELECT COUNT(*) FROM \"Word\";" | npx prisma db execute --stdin | tail -n 1 | tr -d ' ')
+WORD_COUNT=$(node -e "const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); prisma.word.count().then(count => { console.log(count); prisma.\$disconnect(); }).catch(() => { console.log('0'); process.exit(0); });" 2>/dev/null || echo "0")
 if [ "$WORD_COUNT" = "0" ]; then
   echo "Importing words..."
   node scripts/importWords.js

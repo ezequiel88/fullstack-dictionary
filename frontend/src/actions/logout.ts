@@ -9,7 +9,8 @@ export async function logoutAction() {
   try {
     // Remover token do cookie
     cookieStore.delete("token");
-    
+    redirect("/");
+
     return {
       success: true,
       message: "Logout realizado com sucesso",
