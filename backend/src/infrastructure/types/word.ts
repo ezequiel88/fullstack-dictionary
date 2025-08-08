@@ -6,7 +6,7 @@ export type Word = {
 export type WordResponse = {
     results: Word[];
     totalDocs: number;
-    prevous: string;
+    previous: string;
     next: string;
     hasNext: boolean;
     hasPrev: boolean;
