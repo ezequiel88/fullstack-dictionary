@@ -42,7 +42,7 @@ export const Navbar = () => {
                     <Image
                         src="/logo.png"
                         alt="Logo Dictionary"
-                        width={40}
+                        width={180}
                         height={40}
                         className="h-10 w-auto"
                     />
@@ -58,7 +58,7 @@ export const Navbar = () => {
                                         <span className="font-medium">{user.name}</span>
                                     </div>
                                     <Avatar className="h-10 w-10">
-                                        <AvatarFallback className="font-medium text-lg">
+                                        <AvatarFallback className="font-medium">
                                             {getUserInitials(user)}
                                         </AvatarFallback>
                                     </Avatar>

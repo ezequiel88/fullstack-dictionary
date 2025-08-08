@@ -2,15 +2,16 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FavoriteItem, HistoryItem, Word, WordDefinition, WordListResponse } from "@/types";
 import api from "@/lib/api";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import WordCard from "@/components/word-card";
+import WordListTab from "@/components/word-list-tab";
+import HistoryTab from "@/components/history-tab";
+import FavoritesTab from "@/components/favorites-tab";
 
 import { getHistory } from "@/actions/history";
 import { getFavorites, markAsFavorite, removeFavorite } from "@/actions/favorite";
@@ -37,7 +38,6 @@ export default function Dictionary() {
     const [loading, setLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
-    const observerTarget = useRef<HTMLDivElement | null>(null);
     const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const updateURL = useCallback((params: { search?: string; cursor?: string | null }) => {
@@ -193,21 +193,11 @@ export default function Dictionary() {
         };
     }, [search]);
 
-    // Scroll infinito
-    useEffect(() => {
-        const node = observerTarget.current;
-        if (!node) return;
 
-        const observer = new IntersectionObserver((entries) => {
-            const entry = entries[0];
-            if (entry.isIntersecting && nextCursor && !loading) {
-                fetchWords(nextCursor, true);
-            }
-        }, { root: null, rootMargin: "0px 0px 100px 0px", threshold: 0.5 });
 
-        observer.observe(node);
-        return () => observer.disconnect();
-    }, [nextCursor, loading, fetchWords]);
+    const handleLoadMore = useCallback((cursor: string) => {
+        fetchWords(cursor, true);
+    }, [fetchWords]);
 
     const handleToggleFavorite = useCallback(async (wordDef: WordDefinition) => {
         let success = false;
@@ -262,85 +252,28 @@ export default function Dictionary() {
                                     </div>
                                 </div>
                                 <TabsContent value="wordlist" className="mt-4">
-                                    <ScrollArea className="h-screen max-h-[calc(100vh-400px)]">
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-
-                                            {
-                                                words.length === 0 && !loading ? (
-                                                    <div className="col-span-3 text-center text-muted-foreground py-8">
-                                                        Not found words
-                                                    </div>
-                                                )
-                                                    :
-                                                    words.map((word, index) => (
-                                                        <Button
-                                                            key={index}
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-12 bg-accent font-normal"
-                                                            onClick={() => fetchWord(word.id)}
-                                                        >
-                                                            {word.value}
-                                                        </Button>
-                                                    ))}
-                                        </div>
-                                        {loading && (
-                                            <div className="py-2 text-center text-muted-foreground">Carregando...</div>
-                                        )}
-                                        {!isSearching && <div ref={observerTarget} className="h-2" />}
-                                    </ScrollArea>
+                                    <WordListTab
+                                        words={words}
+                                        loading={loading}
+                                        isSearching={isSearching}
+                                        nextCursor={nextCursor}
+                                        onWordClick={fetchWord}
+                                        onLoadMore={handleLoadMore}
+                                    />
                                 </TabsContent>
 
                                 <TabsContent value="history" className="mt-4">
-                                    <ScrollArea className="h-screen max-h-[calc(100vh-400px)]">
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                            {history.length === 0 ? (
-                                                <div className="col-span-3 text-center text-muted-foreground py-8">
-                                                    Not found history
-                                                </div>
-                                            ) : (
-                                                history.map((item, index) => (
-                                                    item.word && (
-                                                        <Button
-                                                            key={index}
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => fetchWord(item.word!.id)}
-                                                            className="h-12 bg-accent text-word-button-foreground font-normal"
-                                                        >
-                                                            {item.word.value}
-                                                        </Button>
-                                                    )
-                                                ))
-                                            )}
-                                        </div>
-                                    </ScrollArea>
+                                    <HistoryTab
+                                        history={history}
+                                        onWordClick={fetchWord}
+                                    />
                                 </TabsContent>
 
                                 <TabsContent value="favorites" className="mt-4">
-                                    <ScrollArea className="h-screen max-h-[calc(100vh-400px)]">
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                            {favorites.length === 0 ? (
-                                                <div className="col-span-3 text-center text-muted-foreground py-8">
-                                                    Not found favorites
-                                                </div>
-                                            ) : (
-                                                favorites.map((favorite, index) => (
-                                                    favorite.word && (
-                                                        <Button
-                                                            key={index}
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => fetchWord(favorite.word!.id)}
-                                                            className="h-12 bg-accent text-word-button-foreground font-normal"
-                                                        >
-                                                            {favorite.word.value}
-                                                        </Button>
-                                                    )
-                                                ))
-                                            )}
-                                        </div>
-                                    </ScrollArea>
+                                    <FavoritesTab
+                                        favorites={favorites}
+                                        onWordClick={fetchWord}
+                                    />
                                 </TabsContent>
                             </Tabs>
                         </CardContent>
