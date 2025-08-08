@@ -15,7 +15,7 @@ export async function markAsFavorite(wordId: string) {
       };
     }
 
-    const { data } = await api.post(`/entries/en/${wordId}/favorite`, {});
+    const { data } = await api.post(`/user/me/${wordId}/favorite`, {});
     
     return {
       success: true,
@@ -25,9 +25,17 @@ export async function markAsFavorite(wordId: string) {
   } catch (error: any) {
     console.error("Mark as favorite error:", error);
     
+    // Se o erro for 404 (palavra não encontrada), retornar mensagem específica
+    if (error.response?.status === 404) {
+      return {
+        success: false,
+        message: "Palavra não encontrada",
+      };
+    }
+    
     return {
       success: false,
-      message: error.message || "Erro ao marcar como favorito",
+      message: error.response?.data?.message || error.message || "Erro ao marcar como favorito",
     };
   }
 }
@@ -42,7 +50,7 @@ export async function removeFavorite(wordId: string) {
       };
     }
 
-    const { data } = await api.delete(`/entries/en/${wordId}/unfavorite`);
+    const { data } = await api.delete(`/user/me/${wordId}/unfavorite`);
     
     return {
       success: true,
@@ -52,9 +60,17 @@ export async function removeFavorite(wordId: string) {
   } catch (error: any) {
     console.error("Remove favorite error:", error);
     
+    // Se o erro for 404, pode ser que a palavra ou o favorito não existam
+    if (error.response?.status === 404) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Favorito não encontrado",
+      };
+    }
+    
     return {
       success: false,
-      message: error.message || "Erro ao remover dos favoritos",
+      message: error.response?.data?.message || error.message || "Erro ao remover dos favoritos",
     };
   }
 }

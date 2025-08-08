@@ -12,6 +12,7 @@ export interface IWordRepository {
 export interface IFavoriteRepository {
   findByUserAndWord(userId: string, wordId: string): Promise<Favorite | null>;
   create(userId: string, wordId: string): Promise<Favorite & { word: Word }>;
+  upsert(userId: string, wordId: string): Promise<Favorite & { word: Word }>;
   delete(userId: string, wordId: string): Promise<void>;
   findByUser(userId: string): Promise<(Favorite & { word: Word })[]>;
 }

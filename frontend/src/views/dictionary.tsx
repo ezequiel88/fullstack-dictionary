@@ -90,21 +90,37 @@ export default function Dictionary() {
 
     const markFavorite = useCallback(async (id: string) => {
         try {
-            await markAsFavorite(id);
-            fetchFavorites();
+            const result = await markAsFavorite(id);
+            if (result.success) {
+                fetchFavorites();
+                return true;
+            } else {
+                showToast.favorites.markError();
+                console.error("Erro ao marcar favorito:", result.message);
+                return false;
+            }
         } catch (error) {
             showToast.favorites.markError();
             console.error("Erro ao marcar favorito:", error);
+            return false;
         }
     }, []);
 
     const unmarkFavorite = useCallback(async (id: string) => {
         try {
-            await removeFavorite(id);
-            fetchFavorites();
+            const result = await removeFavorite(id);
+            if (result.success) {
+                fetchFavorites();
+                return true;
+            } else {
+                showToast.favorites.removeError();
+                console.error("Erro ao desmarcar favorito:", result.message);
+                return false;
+            }
         } catch (error) {
             showToast.favorites.removeError();
             console.error("Erro ao desmarcar favorito:", error);
+            return false;
         }
     }, []);
 
@@ -126,9 +142,8 @@ export default function Dictionary() {
                 setWords((prev) => (append ? [...prev, ...data.results] : data.results));
                 setNextCursor(data.next || null);
 
-                if (!append) {
-                    updateURL({ search: query ?? search, cursor: data.next ?? null });
-                }
+                // Sempre atualizar a URL com o cursor atual, seja para nova busca ou scroll infinito
+                updateURL({ search: query ?? search, cursor: data.next ?? null });
             } catch (error) {
                 showToast.dictionary.fetchWordsError();
                 console.error("Erro ao buscar palavras:", error);
@@ -195,13 +210,16 @@ export default function Dictionary() {
     }, [nextCursor, loading, fetchWords]);
 
     const handleToggleFavorite = useCallback(async (wordDef: WordDefinition) => {
+        let success = false;
+        
         if (wordDef.isFavorite) {
-            await unmarkFavorite(wordDef.id);
+            success = await unmarkFavorite(wordDef.id);
         } else {
-            await markFavorite(wordDef.id);
+            success = await markFavorite(wordDef.id);
         }
-        // Atualizar o estado da palavra atual se for a mesma
-        if (word && word.id === wordDef.id) {
+        
+        // Atualizar o estado da palavra atual apenas se a operação foi bem-sucedida
+        if (success && word && word.id === wordDef.id) {
             setWord({ ...word, isFavorite: !wordDef.isFavorite });
         }
     }, [word, markFavorite, unmarkFavorite]);

@@ -126,6 +126,20 @@ export class FavoriteRepository implements IFavoriteRepository {
     });
   }
 
+  async upsert(userId: string, wordId: string): Promise<Favorite & { word: Word }> {
+    return prisma.favorite.upsert({
+      where: {
+        userId_wordId: { userId, wordId }
+      },
+      update: {},
+      create: {
+        user: { connect: { id: userId } },
+        word: { connect: { id: wordId } }
+      },
+      include: { word: true }
+    });
+  }
+
   async delete(userId: string, wordId: string): Promise<void> {
     await prisma.favorite.deleteMany({
       where: { userId, wordId }

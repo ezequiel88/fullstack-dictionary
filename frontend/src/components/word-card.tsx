@@ -18,7 +18,7 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
     const [playingIndex, setPlayingIndex] = useState<number | null>(null);
     const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
     const [currentMeaningIndex, setCurrentMeaningIndex] = useState(0);
-
+    console.log("Word:", word);
     if (!word?.word) {
         return (
             <div className="space-y-6">

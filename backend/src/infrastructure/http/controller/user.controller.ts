@@ -67,7 +67,8 @@ export class UserController {
         return reply.code(404).send({ message: 'Word not found' });
       }
 
-      const favorite = await favoriteRepository.create(userId, dbWord.id);
+      // Usar upsert para criar ou retornar o favorito existente
+      const favorite = await favoriteRepository.upsert(userId, dbWord.id);
 
       return reply.send({
         id: favorite.id,
@@ -93,6 +94,12 @@ export class UserController {
       const dbWord = await wordRepository.findById(wordId);
       if (!dbWord) {
         return reply.code(404).send({ message: 'Word not found' });
+      }
+
+      // Verificar se o favorito existe antes de tentar deletar
+      const existingFavorite = await favoriteRepository.findByUserAndWord(userId, dbWord.id);
+      if (!existingFavorite) {
+        return reply.code(404).send({ message: 'Favorite not found' });
       }
 
       await favoriteRepository.delete(userId, dbWord.id);
