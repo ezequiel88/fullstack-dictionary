@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { clearHistory } from "@/actions/history";
+import { clearHistory } from "@/actions";
 
 export function ClearHistoryButton() {
     const [isPending, startTransition] = useTransition();

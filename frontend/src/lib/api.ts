@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { getAuthToken } from "./auth";
 import { logoutAction } from "@/actions/logout";
@@ -48,7 +49,7 @@ api.interceptors.response.use(
       try {
         logoutAction();
         redirect("/");
-      } catch (error) {
+      } catch (error: unknown) {
         if (process.env.NODE_ENV !== "production") {
           console.error("Logout error:", error);
         }
@@ -67,7 +68,7 @@ api.interceptors.response.use(
     return Promise.reject({
       status: error.response?.status || 500,
       message:
-        (error.response?.data as any)?.message ||
+        (error.response?.data as { message?: string })?.message ||
         error.message ||
         "Unexpected error occurred",
       data: error.response?.data,

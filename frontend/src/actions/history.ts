@@ -33,3 +33,29 @@ export async function getHistory() {
     };
   }
 }
+
+export async function clearHistory() {
+  try {
+    const authenticated = await isAuthenticated();
+    if (!authenticated) {
+      return {
+        success: false,
+        message: "Usuário não autenticado",
+      };
+    }
+
+    await api.delete("/user/me/history");
+    
+    return {
+      success: true,
+      message: "Histórico limpo com sucesso",
+    };
+  } catch (error: any) {
+    console.error("Clear history error:", error);
+    
+    return {
+      success: false,
+      message: error.message || "Erro ao limpar histórico",
+    };
+  }
+}

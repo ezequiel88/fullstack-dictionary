@@ -13,4 +13,4 @@ export { searchWord, getWordsList } from "./dictionary";
 export { markAsFavorite, removeFavorite, getFavorites } from "./favorite";
 
 // History actions
-export { getHistory } from "./history";
+export { getHistory, clearHistory } from "./history";

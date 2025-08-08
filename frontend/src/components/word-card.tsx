@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Play, Pause, ArrowLeft, ArrowRight, Heart, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 
 interface NormalizedMeaning {
     partOfSpeech: string;
