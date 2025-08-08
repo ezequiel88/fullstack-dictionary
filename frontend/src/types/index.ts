@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // ===== BASE TYPES =====
 
 export interface Word {
@@ -122,6 +124,7 @@ export interface SuccessResponse {
 export interface WordQueryParams {
   search?: string;
   limit?: number;
+  cursor?: string;
   next?: string;
   previous?: string;
 }

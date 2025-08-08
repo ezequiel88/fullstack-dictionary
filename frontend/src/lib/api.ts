@@ -1,69 +1,78 @@
-// API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030';
+import axios, { AxiosError, AxiosInstance } from "axios";
+import { getAuthToken } from "./auth";
+import { logoutAction } from "@/actions/logout";
+import { redirect } from "next/navigation";
 
-// API Endpoints
-export const API_ENDPOINTS = {
-  // Auth
-  SIGN_IN: '/auth/signin',
-  SIGN_UP: '/auth/signup',
-  
-  // User
-  USER_PROFILE: '/user/me',
-  USER_HISTORY: '/user/me/history',
-  USER_FAVORITES: '/user/me/favorites',
-  
-  // Words
-  WORDS_LIST: '/entries/en',
-  WORD_DETAIL: (wordId: string) => `/entries/en/${wordId}`,
-  
-  // Favorites
-  MARK_FAVORITE: (wordId: string) => `/user/me/${wordId}/favorite`,
-  UNMARK_FAVORITE: (wordId: string) => `/user/me/${wordId}/unfavorite`,
-} as const;
+const isServer = typeof window === "undefined";
 
-// HTTP Status Codes
-export const HTTP_STATUS = {
-  OK: 200,
-  CREATED: 201,
-  NO_CONTENT: 204,
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND: 404,
-  INTERNAL_SERVER_ERROR: 500,
-} as const;
+// Seleção dinâmica de baseURL
+const baseURL = isServer
+  ? process.env.API_URL || "http://localhost:3030"
+  : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030";
 
-// Local Storage Keys
-export const STORAGE_KEYS = {
-  AUTH_TOKEN: 'auth_token',
-  USER_DATA: 'user_data',
-} as const;
+const api: AxiosInstance = axios.create({
+  baseURL,
+  timeout: 10000,
+});
 
-// Default pagination values
-export const PAGINATION_DEFAULTS = {
-  LIMIT: 20,
-  PAGE: 1,
-} as const;
+// Interceptor de requisição
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      const token = await getAuthToken();
+      if (token) config.headers.Authorization = token;
 
-// API Headers
-export const getAuthHeaders = (token?: string) => {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-  
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+      return config;
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Request interceptor error:", error);
+      }
+      throw error;
+    }
+  },
+  (error) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Request configuration error:", error);
+    }
+    return Promise.reject(error);
   }
-  
-  return headers;
-};
+);
 
-// Error messages
-export const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'Erro de conexão. Verifique sua internet.',
-  UNAUTHORIZED: 'Sessão expirada. Faça login novamente.',
-  FORBIDDEN: 'Você não tem permissão para esta ação.',
-  NOT_FOUND: 'Recurso não encontrado.',
-  SERVER_ERROR: 'Erro interno do servidor. Tente novamente.',
-  VALIDATION_ERROR: 'Dados inválidos. Verifique os campos.',
-} as const;
+// Interceptor de resposta
+api.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+
+    // Se for erro 401 -> logout
+    if (error.response?.status === 401) {
+      try {
+        logoutAction();
+        redirect("/");
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("Logout error:", error);
+        }
+      }
+    }
+    if (process.env.NODE_ENV !== "production") {
+      console.error("API Response Error:", {
+        message: error.message,
+        url: error.config?.url,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+    }
+
+    // Tratamento padrão de erro
+    return Promise.reject({
+      status: error.response?.status || 500,
+      message:
+        (error.response?.data as any)?.message ||
+        error.message ||
+        "Unexpected error occurred",
+      data: error.response?.data,
+    });
+  }
+);
+
+export default api;
