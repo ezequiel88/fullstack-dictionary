@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import api from "@/lib/api";
@@ -15,7 +16,7 @@ export async function registerAction(payload: AuthSignUp) {
       return {
         success: false,
         message: "Dados inválidos",
-        errors: validation.errors,
+        errors: validation.error.issues.map(issue => issue.message),
       };
     }
 

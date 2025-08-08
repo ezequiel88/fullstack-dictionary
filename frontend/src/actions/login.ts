@@ -16,7 +16,7 @@ export async function loginAction(payload: AuthSignIn) {
       return {
         success: false,
         message: "Dados inválidos",
-        errors: validation.error,
+        errors: validation.error.issues.map(issue => issue.message),
       };
     }
 
