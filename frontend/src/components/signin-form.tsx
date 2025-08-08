@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
 import { showToast, getErrorMessage } from "@/lib/toast";
+import { useRouter } from "next/navigation";
 
 const signInSchema = z.object({
     email: z.email("Endereço de email inválido"),
@@ -26,6 +27,7 @@ interface SignInFormProps {
 
 export const SignInForm = ({ onSuccess }: SignInFormProps) => {
     const { signIn, isLoading } = useAuth();
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -45,6 +47,7 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
             showToast.auth.loginSuccess();
             reset();
             onSuccess();
+            router.replace("/dictionary");
         } catch (error: unknown) {
             const errorMessage = getErrorMessage(error);
             showToast.auth.loginError(errorMessage);

@@ -12,11 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
 import { showToast, getErrorMessage } from "@/lib/toast";
+import { useRouter } from "next/navigation";
 
 const signUpSchema = z
     .object({
         name: z.string().min(2, "Nome completo é obrigatório"),
-        email: z.string().email("Endereço de email inválido"),
+        email: z.email("Endereço de email inválido"),
         password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
         confirmPassword: z.string().min(6, "Por favor, confirme sua senha"),
     })
@@ -33,6 +34,7 @@ interface SignUpFormProps {
 
 export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
     const { signUp, isLoading } = useAuth();
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -52,6 +54,7 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
             showToast.auth.signupSuccess();
             reset();
             onSuccess();
+            router.replace("/dictionary");
         } catch (error: unknown) {
             const errorMessage = getErrorMessage(error);
             showToast.auth.signupError(errorMessage);
