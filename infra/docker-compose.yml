@@ -3,7 +3,7 @@ services:
     image: postgres:16.4-alpine
     container_name: postgres-dictionary
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:
@@ -19,6 +19,55 @@ services:
     networks:
       - dictionary
 
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-dictionary
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - dictionary
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: backend-dictionary
+    ports:
+      - "3030:3030"
+    environment:
+      DATABASE_URL: "postgresql://dictionary:dictionary@postgres:5432/dictionary?schema=public"
+      REDIS_URL: "redis://redis:6379"
+      JWT_SECRET: "your-super-secret-jwt-key-change-this-in-production"
+      DICTIONARY_URL: "https://api.dictionaryapi.dev/api/v2/entries/en"
+      PORT: 3030
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - dictionary
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: frontend-dictionary
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: "http://localhost:3030"
+      NODE_ENV: production
+    depends_on:
+      - backend
+    networks:
+      - dictionary
+    restart: unless-stopped
+
   pgadmin:
     image: dpage/pgadmin4:9.5.0
     container_name: pgadmin-dictionary
@@ -26,22 +75,14 @@ services:
       - "5050:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: "desafio@coodesh.com"
-      PGADMIN_DEFAULT_PASSWORD: "admin1234"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - dictionary
-
-  redis:
-    image: redis:7.2-alpine
-    container_name: redis-dictionary
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./redisdata:/data
-    networks:
-      - dictionary
+    profiles:
+      - admin
 
 volumes:
   pgdata:

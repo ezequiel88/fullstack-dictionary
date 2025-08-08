@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Configuração para Docker
+  output: 'standalone',
+  
   // Configurações para PWA
   async headers() {
     return [

@@ -14,10 +14,12 @@ export const usePwaPrompt = () => {
 
   useEffect(() => {
     // Verificar se já está instalado
-    if (window.matchMedia("(display-mode: standalone)").matches) {
+    if (typeof window !== 'undefined' && window.matchMedia("(display-mode: standalone)").matches) {
       setIsInstalled(true);
       return;
     }
+
+    if (typeof window === 'undefined') return;
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();

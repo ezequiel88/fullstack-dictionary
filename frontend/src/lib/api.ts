@@ -65,7 +65,7 @@ api.interceptors.response.use(
       message:
         (error.response?.data as { message?: string })?.message ||
         error.message ||
-        "Unexpected error occurred",
+        "Ocorreu um erro na requisição. Já estamos trabalhando para resolver.",
       data: error.response?.data,
     });
   }

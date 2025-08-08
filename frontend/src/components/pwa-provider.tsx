@@ -8,7 +8,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Log do status PWA para debug
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
       console.log('PWA Status:', {
         serviceWorkerSupported: isSupported,
         serviceWorkerRegistered: isRegistered,
