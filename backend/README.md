@@ -1,8 +1,8 @@
 # 📚 Dictionary Backend API
 
->  This is a challenge by [Coodesh](https://coodesh.com/)
+Uma API REST robusta e escalável para um dicionário online que vai fazer você se apaixonar por **TypeScript**, **Fastify**, **Prisma** e os princípios da **Clean Architecture**! 💙
 
-Uma API REST robusta e escalável para um dicionário online, construída com **TypeScript**, **Fastify**, **Prisma** e seguindo os princípios da **Clean Architecture**.
+*Porque quem disse que código bem estruturado não pode ser divertido de desenvolver?* 😉
 
 ## 🚀 Características Principais
 
@@ -449,13 +449,13 @@ backend/
 
 ## 🤝 Contribuição
 
-### Como Contribuir
+### Como Contribuir (e se divertir no processo! 🎉)
 
-1. **Fork** o projeto
+1. **Fork** o projeto (sim, é seu agora! 🍴)
 2. **Crie** uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
 3. **Commit** suas mudanças (`git commit -m 'Add some AmazingFeature'`)
 4. **Push** para a branch (`git push origin feature/AmazingFeature`)
-5. **Abra** um Pull Request
+5. **Abra** um Pull Request (e aguarde os elogios! 🌟)
 
 ### Padrões de Código
 
@@ -484,9 +484,18 @@ pnpm test
 pnpm dev
 ```
 
-## 📄 Licença
+## 📄 Licença & Aprendizado
 
-Este projeto está sob a licença **ISC**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está sob a licença **ISC** - isso significa que você pode usar, modificar, distribuir e aprender com este código livremente! 🎓
+
+**💡 Sinta-se à vontade para:**
+- 📖 Estudar a arquitetura e implementações
+- 🔧 Usar como base para seus próprios projetos
+- 🚀 Experimentar com novas funcionalidades
+- 📚 Aprender sobre Clean Architecture, TypeScript e boas práticas
+- 🤝 Compartilhar conhecimento com outros desenvolvedores
+
+> **"O conhecimento cresce quando compartilhado"** - Este projeto foi criado não apenas como uma solução técnica, mas como uma oportunidade de aprendizado para toda a comunidade dev! 🌟
 
 ## 👨‍💻 Autor
 
@@ -497,11 +506,15 @@ Este projeto está sob a licença **ISC**. Veja o arquivo [LICENSE](LICENSE) par
 
 ## 📞 Suporte
 
-Se você encontrar algum problema ou tiver dúvidas:
+Ficou com alguma dúvida? Não se preocupe, todos nós já passamos por isso! 🤗
 
-1. **Verifique** a [documentação da API](http://localhost:3030/docs)
-2. **Consulte** os [issues existentes](https://github.com/ezequiel88/fullstack-dictionary/issues)
-3. **Abra** um novo issue se necessário
+1. **Verifique** a [documentação da API](http://localhost:3030/docs) (ela é sua amiga! 📖)
+2. **Consulte** os [issues existentes](https://github.com/ezequiel88/fullstack-dictionary/issues) (talvez alguém já teve a mesma dúvida)
+3. **Abra** um novo issue se necessário (sem vergonha, estamos aqui para ajudar! 💪)
+
+---
+
+> This is a challenge by [Coodesh](https://coodesh.com/)
 
 ---
 
@@ -509,6 +522,8 @@ Se você encontrar algum problema ou tiver dúvidas:
 
 **[⬆ Voltar ao topo](#-dictionary-backend-api)**
 
-Made with ❤️ for the Fullstack Challenge
+Made with ❤️, ☕ e muito TypeScript para o Fullstack Challenge
+
+*"Código limpo é como uma boa piada - se você precisa explicar, provavelmente não está bom o suficiente!"* 😄
 
 </div>
