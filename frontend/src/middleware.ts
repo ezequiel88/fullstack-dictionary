@@ -11,7 +11,8 @@ export async function middleware(req: NextRequest) {
   // Permite service worker e outros arquivos PWA sem redirecionamento
   if (nextUrl.pathname === "/sw.js" || 
       nextUrl.pathname === "/offline.html" ||
-      nextUrl.pathname === "/manifest.json") {
+      nextUrl.pathname === "/manifest.json" ||
+      nextUrl.pathname === "/test-sw.html") {
     return NextResponse.next();
   }
 
@@ -40,6 +41,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api/auth/|_next/|favicon.ico|manifest.json|sw.js|offline.html|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)",
+    "/((?!api/auth/|_next/|favicon.ico|manifest.json|sw.js|offline.html|test-sw.html|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)",
   ],
 };

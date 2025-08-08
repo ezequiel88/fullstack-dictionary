@@ -15,7 +15,10 @@ Uma interface moderna e responsiva para o dicionário online que vai fazer você
 - ✅ **Axios** para comunicação com a API
 - ✅ **Next Themes** para suporte a tema escuro/claro
 - ✅ **Lucide React** para ícones consistentes
-- ✅ **PWA Ready** com manifest e service worker
+- ✅ **PWA Completo** com service worker, cache offline e instalação
+- ✅ **Service Worker** com estratégias de cache inteligentes
+- ✅ **Offline Support** com fallbacks e sincronização
+- ✅ **Push Notifications** preparado para notificações
 - ✅ **ESLint** para qualidade de código
 - ✅ **Responsive Design** para todos os dispositivos
 
@@ -28,6 +31,7 @@ Uma interface moderna e responsiva para o dicionário online que vai fazer você
 - [Build e Deploy](#-build-e-deploy)
 - [Arquitetura](#-arquitetura)
 - [Funcionalidades](#-funcionalidades)
+- [PWA (Progressive Web App)](#-pwa-progressive-web-app)
 - [Componentes](#-componentes)
 - [Estilização](#-estilização)
 - [Performance](#-performance)
@@ -71,18 +75,18 @@ cp .env.example .env.local
 2. **Configure as variáveis de ambiente:**
 ```env
 # API Configuration
-NEXT_PUBLIC_API_URL="http://localhost:3030"
+API_URL="http://localhost:3030"
 
 # App Configuration
-NEXT_PUBLIC_APP_NAME="Dictionary App"
-NEXT_PUBLIC_APP_DESCRIPTION="Seu dicionário online favorito"
+APP_NAME="Dictionary App"
+APP_DESCRIPTION="Seu dicionário online favorito"
 
 # Environment
 NODE_ENV="development"
 ```
 
 3. **Configuração do Backend:**
-Certifique-se de que o backend esteja rodando em `http://localhost:3030` ou ajuste a variável `NEXT_PUBLIC_API_URL` conforme necessário.
+Certifique-se de que o backend esteja rodando em `http://localhost:3030` ou ajuste a variável `API_URL` conforme necessário.
 
 ## 🚀 Execução
 
@@ -171,6 +175,192 @@ O projeto segue as melhores práticas do **Next.js 15** com **App Router**, orga
 - **Static Generation** para páginas estáticas
 - **Image Optimization** automática
 - **Code Splitting** inteligente
+
+## 📱 PWA (Progressive Web App)
+
+### 🚀 Funcionalidades PWA Implementadas
+
+#### Service Worker (`public/sw.js`)
+- **Cache First Strategy** para assets estáticos (CSS, JS, imagens)
+- **Network First Strategy** para API calls e navegação
+- **Offline Fallback** com página personalizada (`offline.html`)
+- **Background Sync** para sincronização quando voltar online
+- **Push Notifications** preparado para notificações futuras
+- **Cache Management** automático com limpeza de versões antigas
+
+#### Manifest (`public/manifest.json`)
+- **Instalação nativa** em dispositivos móveis e desktop
+- **Ícones otimizados** (192x192, 512x512, Apple Touch Icon)
+- **Splash Screen** personalizada para iOS
+- **Shortcuts** para ações rápidas (Buscar, Favoritos, Histórico)
+- **Screenshots** para app stores
+- **Tema personalizado** com cores da aplicação
+
+#### Componentes PWA
+- **PwaInstallBanner** - Banner de instalação inteligente
+- **PwaNotifications** - Notificações de status (offline, atualizações)
+- **PwaProvider** - Inicialização e gerenciamento do PWA
+
+#### Hooks Customizados
+- **usePwaPrompt** - Gerencia prompt de instalação
+- **useServiceWorker** - Registra e monitora service worker
+
+### 🔧 Como Testar o PWA
+
+#### 1. **Instalação**
+```bash
+# Acesse a aplicação
+http://localhost:3000
+
+# No Chrome/Edge:
+# - Clique no ícone de instalação na barra de endereços
+# - Ou use o banner de instalação que aparece automaticamente
+
+# No mobile:
+# - Menu > "Adicionar à tela inicial"
+```
+
+#### 2. **Teste Offline**
+```bash
+# 1. Abra DevTools (F12)
+# 2. Vá para Network tab
+# 3. Marque "Offline"
+# 4. Recarregue a página
+# ✅ Deve mostrar a página offline personalizada
+```
+
+#### 3. **Verificação no DevTools**
+```bash
+# Application tab > Service Workers
+# ✅ Deve mostrar SW registrado e ativo
+
+# Application tab > Cache Storage
+# ✅ Deve mostrar caches criados:
+#   - static-cache-v1 (CSS, JS, imagens)
+#   - api-cache-v1 (respostas da API)
+
+# Application tab > Manifest
+# ✅ Deve carregar manifest.json sem erros
+```
+
+#### 4. **Página de Teste**
+```bash
+# Acesse a página de diagnóstico
+http://localhost:3000/test-sw.html
+
+# Funcionalidades disponíveis:
+# - Testar acesso ao service worker
+# - Registrar/desregistrar SW
+# - Verificar caches
+# - Limpar caches
+# - Status de conexão
+```
+
+### 📊 PWA Score (Lighthouse)
+
+A aplicação atende aos critérios PWA:
+- ✅ **Installable** - Manifest válido e service worker
+- ✅ **Offline Capable** - Funciona sem conexão
+- ✅ **Fast Loading** - Cache estratégico
+- ✅ **Secure** - HTTPS ready
+- ✅ **Responsive** - Design adaptativo
+- ✅ **Engaging** - Push notifications ready
+
+### 🔄 Estratégias de Cache
+
+#### Cache First (Assets Estáticos)
+```javascript
+// CSS, JS, imagens, fontes
+// 1. Busca no cache primeiro
+// 2. Se não encontrar, busca na rede
+// 3. Armazena no cache para próximas vezes
+```
+
+#### Network First (API e Navegação)
+```javascript
+// API calls, páginas HTML
+// 1. Tenta buscar na rede primeiro
+// 2. Se falhar, busca no cache
+// 3. Atualiza cache com resposta da rede
+```
+
+#### Stale While Revalidate (Recursos Dinâmicos)
+```javascript
+// Imagens de perfil, conteúdo dinâmico
+// 1. Retorna do cache imediatamente
+// 2. Busca atualização na rede em background
+// 3. Atualiza cache para próxima vez
+```
+
+### 🔔 Push Notifications (Preparado)
+
+O service worker já está preparado para push notifications:
+
+```javascript
+// Estrutura implementada:
+// - Registration de push subscription
+// - Handling de push events
+// - Notification display
+// - Click handling
+
+// Para ativar:
+// 1. Configure servidor de push (Firebase, OneSignal, etc.)
+// 2. Implemente backend para envio
+// 3. Ative permissões no frontend
+```
+
+### 📱 Instalação Cross-Platform
+
+#### Desktop (Chrome/Edge)
+- Ícone de instalação na barra de endereços
+- Banner automático após critérios PWA
+- Funciona como app nativo
+
+#### Mobile (iOS/Android)
+- "Adicionar à tela inicial" no menu do navegador
+- Splash screen personalizada
+- Modo standalone (sem barra do navegador)
+
+#### Detecção de Instalação
+```javascript
+// Hook usePwaPrompt detecta:
+// - Suporte a PWA
+// - Evento beforeinstallprompt
+// - Status de instalação
+// - Modo standalone
+```
+
+### 🛠️ Arquivos PWA
+
+```
+public/
+├── 📄 sw.js                    # Service Worker principal
+├── 📄 manifest.json            # Manifest PWA
+├── 📄 offline.html             # Página offline
+├── 📄 test-sw.html             # Página de teste
+├── 🖼️ icon-192.png             # Ícone PWA 192x192
+├── 🖼️ icon-512.png             # Ícone PWA 512x512
+└── 🖼️ apple-touch-icon.png     # Ícone Apple
+
+src/components/
+├── 📄 pwa-banner.tsx           # Banner de instalação
+├── 📄 pwa-notifications.tsx    # Notificações PWA
+└── 📄 pwa-provider.tsx         # Provider PWA
+
+src/hooks/
+├── 📄 usePwaPrompt.ts          # Hook de instalação
+└── 📄 useServiceWorker.ts      # Hook do service worker
+```
+
+### 🚀 Próximas Melhorias PWA
+
+- [ ] **Background Sync** - Sincronização em background
+- [ ] **Push Notifications** - Notificações push reais
+- [ ] **Periodic Sync** - Sincronização periódica
+- [ ] **Share Target** - Receber compartilhamentos
+- [ ] **File Handling** - Manipular arquivos
+- [ ] **Shortcuts** - Atalhos dinâmicos
+- [ ] **Badging** - Badge no ícone do app
 
 ## 🧩 Componentes
 
@@ -273,7 +463,10 @@ frontend/
 │   ├── 🖼️ icon-192.png           # Ícone PWA 192x192
 │   ├── 🖼️ icon-512.png           # Ícone PWA 512x512
 │   ├── 🖼️ apple-touch-icon.png   # Ícone Apple
-│   └── 📄 manifest.json          # Manifest PWA
+│   ├── 📄 manifest.json          # Manifest PWA
+│   ├── 📄 sw.js                  # Service Worker
+│   ├── 📄 offline.html           # Página offline
+│   └── 📄 test-sw.html           # Página de teste PWA
 ├── 📁 src/
 │   ├── 📁 app/                   # App Router (Next.js 15)
 │   │   ├── 📁 (auth)/           # Grupo de rotas de autenticação
@@ -306,6 +499,9 @@ frontend/
 │   │   │   ├── 📄 word-card.tsx # Card de palavra
 │   │   │   ├── 📄 search-bar.tsx # Barra de pesquisa
 │   │   │   ├── 📄 user-profile.tsx # Perfil do usuário
+│   │   │   ├── 📄 pwa-banner.tsx # Banner de instalação PWA
+│   │   │   ├── 📄 pwa-notifications.tsx # Notificações PWA
+│   │   │   ├── 📄 pwa-provider.tsx # Provider PWA
 │   │   │   └── 📄 ...           # Outros componentes
 │   │   └── 📁 common/          # Componentes comuns
 │   │       ├── 📄 loading.tsx   # Loading spinner
@@ -315,7 +511,9 @@ frontend/
 │   │   ├── 📄 use-auth.ts      # Hook de autenticação
 │   │   ├── 📄 use-api.ts       # Hook para API calls
 │   │   ├── 📄 use-local-storage.ts # Hook para localStorage
-│   │   └── 📄 use-debounce.ts  # Hook de debounce
+│   │   ├── 📄 use-debounce.ts  # Hook de debounce
+│   │   ├── 📄 usePwaPrompt.ts  # Hook de instalação PWA
+│   │   └── 📄 useServiceWorker.ts # Hook do service worker
 │   ├── 📁 actions/             # Server actions
 │   │   ├── 📄 auth.ts          # Ações de autenticação
 │   │   ├── 📄 words.ts         # Ações de palavras
@@ -386,7 +584,6 @@ frontend/
 - [ ] **Storybook** - Documentação de componentes
 - [ ] **Testing Library** - Testes de componentes
 - [ ] **Playwright** - Testes end-to-end
-- [ ] **PWA Completo** - Service worker e offline support
 - [ ] **Internacionalização** - Suporte a múltiplos idiomas
 - [ ] **Analytics** - Tracking de uso
 - [ ] **Error Boundary** - Tratamento avançado de erros
@@ -486,7 +683,7 @@ Ficou com alguma dúvida? Não se preocupe, todos nós já passamos por isso! �
 
 **[⬆ Voltar ao topo](#-dictionary-frontend)**
 
-Made with ❤️, ☕ e muito React para o Fullstack Challenge
+Made with ❤️, ☕ e muito NextJS para o Fullstack Challenge
 
 *"Um bom frontend é como uma boa conversa - deve ser envolvente, claro e deixar você querendo mais!"* 😄
 
