@@ -216,7 +216,7 @@ export default function Dictionary() {
 
 
     return (
-        <div className="container mx-auto max-w-6xl p-4 space-y-6 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow">
+        <div className="container mx-auto p-4 space-y-6 *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Learning Area */}
 

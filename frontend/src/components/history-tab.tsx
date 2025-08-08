@@ -10,7 +10,7 @@ interface HistoryTabProps {
 export default function HistoryTab({ history, onWordClick }: HistoryTabProps) {
   return (
     <ScrollArea className="h-screen max-h-[calc(100vh-400px)]">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {history.length === 0 ? (
           <div className="col-span-3 text-center text-muted-foreground py-8">
             Not found history
@@ -21,9 +21,9 @@ export default function HistoryTab({ history, onWordClick }: HistoryTabProps) {
               <Button
                 key={index}
                 variant="ghost"
-                size="sm"
+                size="lg"
                 onClick={() => onWordClick(item.word!.id)}
-                className="h-12 bg-accent text-word-button-foreground font-normal"
+                className="h-16 bg-accent text-word-button-foreground font-normal text-sm hover:bg-accent/80 transition-colors"
               >
                 {item.word.value}
               </Button>
