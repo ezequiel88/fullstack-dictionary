@@ -45,17 +45,12 @@ export class WordController {
       // Check if it's a favorite
       const favorite = await favoriteRepository.findByUserAndWord(userId, dbWord.id);
 
-      // Extract the first word from the normalized array
-      const wordData = Array.isArray(result.word) && result.word.length > 0 
-        ? result.word[0] 
-        : result.word;
-
       return reply
         .header('x-cache', result.fromCache ? 'HIT' : 'MISS')
         .send({
+          ...result,
           id: dbWord.id,
-          isFavorite: !!favorite,
-          ...wordData
+          isFavorite: !!favorite
         });
     } catch (error) {
       request.log.error(error);

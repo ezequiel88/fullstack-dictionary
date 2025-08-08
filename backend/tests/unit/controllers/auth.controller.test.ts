@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { AuthController } from '../../../src/infrastructure/http/controller/auth.controller.js';
-import { DependencyContainer } from '../../../src/infrastructure/container/dependency-container.js';
 import { IUserRepository } from '../../../src/domain/repositories/user.repository.interface.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -47,8 +46,8 @@ describe('AuthController', () => {
   describe('signUp', () => {
     it('should create a new user successfully', async () => {
       const userData = {
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'Password123',
       };
 
@@ -63,8 +62,8 @@ describe('AuthController', () => {
 
       const user = {
         id: userId,
-        email: 'john@example.com',
-        name: 'John Doe',
+        email: 'ezequiel@coodesh.com',
+        name: 'Ezequiel Tavares',
         createdAt: new Date(),
       };
 
@@ -80,20 +79,20 @@ describe('AuthController', () => {
 
       await AuthController.signUp(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockUserService.createUser).toHaveBeenCalledWith({
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'Password123',
       });
-      expect(mockReply.jwtSign).toHaveBeenCalledWith({ id: userId, email: 'john@example.com' });
+      expect(mockReply.jwtSign).toHaveBeenCalledWith({ id: userId, email: 'ezequiel@coodesh.com' });
       expect(mockReply.code).toHaveBeenCalledWith(200);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'User created successfully',
         user: {
           id: userId,
-          email: 'john@example.com',
-          name: 'John Doe',
+          email: 'ezequiel@coodesh.com',
+          name: 'Ezequiel Tavares',
           createdAt: user.createdAt,
         },
         token: 'jwt-token-123',
@@ -102,8 +101,8 @@ describe('AuthController', () => {
 
     it('should handle user creation error', async () => {
       const userData = {
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'Password123',
       };
 
@@ -123,7 +122,7 @@ describe('AuthController', () => {
 
       await AuthController.signUp(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'Internal server error',
@@ -132,8 +131,8 @@ describe('AuthController', () => {
 
     it('should handle internal server error', async () => {
       mockRequest.body = {
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'Password123',
       };
 
@@ -157,7 +156,7 @@ describe('AuthController', () => {
 
     it('should sign in user successfully', async () => {
       const loginData = {
-        email: 'john@example.com',
+        email: 'ezequiel@coodesh.com',
         password: 'Password123',
       };
 
@@ -165,9 +164,9 @@ describe('AuthController', () => {
 
       const user = {
         id: 'user-id-123',
-        email: 'john@example.com',
+        email: 'ezequiel@coodesh.com',
         password: 'hashedPassword123',
-        name: 'John Doe',
+        name: 'Ezequiel Tavares',
         createdAt: new Date(),
       };
 
@@ -183,16 +182,16 @@ describe('AuthController', () => {
 
       await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockUserService.validatePassword).toHaveBeenCalledWith('Password123', 'hashedPassword123');
-      expect(mockReply.jwtSign).toHaveBeenCalledWith({ id: 'user-id-123', email: 'john@example.com' });
+      expect(mockReply.jwtSign).toHaveBeenCalledWith({ id: 'user-id-123', email: 'ezequiel@coodesh.com' });
       expect(mockReply.code).toHaveBeenCalledWith(200);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'Login successful',
         user: {
           id: 'user-id-123',
-          email: 'john@example.com',
-          name: 'John Doe',
+          email: 'ezequiel@coodesh.com',
+          name: 'Ezequiel Tavares',
           createdAt: user.createdAt,
         },
         token: 'jwt-token-123',
@@ -201,7 +200,7 @@ describe('AuthController', () => {
 
     it('should handle invalid credentials (user not found)', async () => {
       const loginData = {
-        email: 'john@example.com',
+        email: 'ezequiel@coodesh.com',
         password: 'wrongpassword',
       };
 
@@ -219,7 +218,7 @@ describe('AuthController', () => {
 
       await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockUserService.validatePassword).not.toHaveBeenCalled();
       expect(mockReply.code).toHaveBeenCalledWith(401);
       expect(mockReply.send).toHaveBeenCalledWith({
@@ -229,7 +228,7 @@ describe('AuthController', () => {
 
     it('should return error for wrong password', async () => {
       const loginData = {
-        email: 'john@example.com',
+        email: 'ezequiel@coodesh.com',
         password: 'wrongpassword',
       };
 
@@ -237,9 +236,9 @@ describe('AuthController', () => {
 
       const user = {
         id: 'user-id-123',
-        email: 'john@example.com',
+        email: 'ezequiel@coodesh.com',
         password: 'hashedPassword123',
-        name: 'John Doe',
+        name: 'Ezequiel Tavares',
         createdAt: new Date(),
       };
 
@@ -255,7 +254,7 @@ describe('AuthController', () => {
 
       await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockUserService.validatePassword).toHaveBeenCalledWith('wrongpassword', 'hashedPassword123');
       expect(mockReply.code).toHaveBeenCalledWith(401);
       expect(mockReply.send).toHaveBeenCalledWith({
@@ -265,7 +264,7 @@ describe('AuthController', () => {
 
     it('should handle internal server error', async () => {
       const loginData = {
-        email: 'john@example.com',
+        email: 'ezequiel@coodesh.com',
         password: 'Password123',
       };
 
@@ -283,7 +282,7 @@ describe('AuthController', () => {
 
       await AuthController.signIn(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(mockUserService.getUserByEmail).toHaveBeenCalledWith('ezequiel@coodesh.com');
       expect(mockReply.code).toHaveBeenCalledWith(500);
       expect(mockReply.send).toHaveBeenCalledWith({
         message: 'Internal server error',

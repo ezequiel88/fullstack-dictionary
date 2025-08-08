@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { UserController } from '../../../src/infrastructure/http/controller/user.controller.js';
-import { DependencyContainer } from '../../../src/infrastructure/container/dependency-container.js';
 
 interface FastifyCustomRequest extends FastifyRequest {
   user: {
@@ -42,8 +41,8 @@ describe('UserController', () => {
     it('should return user profile successfully', async () => {
       const user = {
         id: 'user-id-123',
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'hashedPassword',
       };
 
@@ -61,8 +60,8 @@ describe('UserController', () => {
       expect(mockUserService.getUserById).toHaveBeenCalledWith('user-id-123');
       expect(mockReply.send).toHaveBeenCalledWith({
         id: 'user-id-123',
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
       });
     });
 
@@ -148,7 +147,7 @@ describe('UserController', () => {
       };
 
       const mockFavoriteRepository = {
-        create: jest.fn().mockResolvedValue({
+        upsert: jest.fn().mockResolvedValue({
           id: 'favorite-1',
           word: {
             id: 'word-id-123',
@@ -166,7 +165,7 @@ describe('UserController', () => {
       await UserController.markFavorite(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
       expect(mockWordRepository.findById).toHaveBeenCalledWith('word-id-123');
-      expect(mockFavoriteRepository.create).toHaveBeenCalledWith('user-id-123', 'word-id-123');
+      expect(mockFavoriteRepository.upsert).toHaveBeenCalledWith('user-id-123', 'word-id-123');
       expect(mockReply.send).toHaveBeenCalledWith({
         id: 'favorite-1',
         word: {
@@ -184,7 +183,7 @@ describe('UserController', () => {
       };
 
       const mockFavoriteRepository = {
-        create: jest.fn(),
+        upsert: jest.fn() as any,
       };
 
       // Mock the static container property directly
@@ -214,7 +213,11 @@ describe('UserController', () => {
       };
 
       const mockFavoriteRepository = {
-        delete: jest.fn().mockResolvedValue(true),
+        findByUserAndWord: jest.fn().mockResolvedValue({
+          id: 'favorite-1',
+          word: { id: 'word-id-123', value: 'hello' },
+        }) as any,
+        delete: jest.fn().mockResolvedValue(true) as any,
       };
 
       // Mock the static container property directly
@@ -226,6 +229,7 @@ describe('UserController', () => {
       await UserController.unmarkFavorite(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
       expect(mockWordRepository.findById).toHaveBeenCalledWith('word-id-123');
+      expect(mockFavoriteRepository.findByUserAndWord).toHaveBeenCalledWith('user-id-123', 'word-id-123');
       expect(mockFavoriteRepository.delete).toHaveBeenCalledWith('user-id-123', 'word-id-123');
       expect(mockReply.code).toHaveBeenCalledWith(204);
       expect(mockReply.send).toHaveBeenCalledWith();

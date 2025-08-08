@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { WordController } from '../../../src/infrastructure/http/controller/word.controller.js';
-import { DependencyContainer } from '../../../src/infrastructure/container/dependency-container.js';
 
 // Mock dependencies
 jest.mock('../../../src/infrastructure/container/dependency-container');

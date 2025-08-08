@@ -5,6 +5,7 @@ import {
   IHistoryRepository 
 } from '../../domain/repositories/word.repository.interface.js';
 import { CursorQuery, CursorResponse } from '../types/word.js';
+import { isValidWord } from '../utils/wordValidator.js';
 import prisma from '../database/prisma.js';
 
 export class WordRepository implements IWordRepository {
@@ -63,8 +64,11 @@ export class WordRepository implements IWordRepository {
       });
     }
 
-    const hasNext = words.length > pageSize;
-    const results = words.slice(0, pageSize);
+    // Filter out invalid words
+    const validWords = words.filter(word => isValidWord(word.value));
+    
+    const hasNext = validWords.length > pageSize;
+    const results = validWords.slice(0, pageSize);
     const nextCursor = hasNext ? results[results.length - 1].id : null;
     const previousCursor = results.length > 0 ? results[0].id : null;
 
@@ -87,12 +91,22 @@ export class WordRepository implements IWordRepository {
   }
 
   async findByValue(value: string): Promise<Word | null> {
+    // Validate the word before searching
+    if (!isValidWord(value)) {
+      return null;
+    }
+    
     return prisma.word.findUnique({
       where: { value: value.toLowerCase() }
     });
   }
 
   async create(value: string): Promise<Word> {
+    // Validate the word before creating
+    if (!isValidWord(value)) {
+      throw new Error(`Invalid word format: ${value}`);
+    }
+    
     return prisma.word.create({
       data: { value: value.toLowerCase() }
     });

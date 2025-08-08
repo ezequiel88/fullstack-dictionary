@@ -20,8 +20,8 @@ describe('UserService', () => {
   describe('createUser', () => {
     it('should create a user successfully', async () => {
       const userData = {
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'password123',
       };
 
@@ -46,8 +46,8 @@ describe('UserService', () => {
 
     it('should throw error when user creation fails', async () => {
       const userData = {
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'hashedPassword123',
       };
 
@@ -59,10 +59,10 @@ describe('UserService', () => {
 
   describe('getUserByEmail', () => {
     it('should return user when found', async () => {
-      const email = 'john@example.com';
+      const email = 'ezequiel@coodesh.com';
       const user = {
         id: 'user-id-123',
-        name: 'John Doe',
+        name: 'Ezequiel Tavares',
         email,
         password: 'hashedPassword123',
         createdAt: new Date(),
@@ -93,8 +93,8 @@ describe('UserService', () => {
       const userId = 'user-id-123';
       const user = {
         id: userId,
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Ezequiel Tavares',
+        email: 'ezequiel@coodesh.com',
         password: 'hashedPassword123',
         createdAt: new Date(),
       };
