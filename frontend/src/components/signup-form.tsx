@@ -15,13 +15,13 @@ import { showToast, getErrorMessage } from "@/lib/toast";
 
 const signUpSchema = z
     .object({
-        name: z.string().min(2, "Full name is required"),
-        email: z.string().email("Invalid email address"),
-        password: z.string().min(6, "Password must be at least 6 characters"),
-        confirmPassword: z.string().min(6, "Please confirm your password"),
+        name: z.string().min(2, "Nome completo é obrigatório"),
+        email: z.string().email("Endereço de email inválido"),
+        password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+        confirmPassword: z.string().min(6, "Por favor, confirme sua senha"),
     })
     .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
+        message: "As senhas não coincidem",
         path: ["confirmPassword"],
     });
 
@@ -61,14 +61,14 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Nome Completo</Label>
                 <div className={clsx("relative transition-transform", errors.name && "animate-shake")}>
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         id="name"
                         type="text"
                         autoComplete="name"
-                        placeholder="Enter your full name"
+                        placeholder="Digite seu nome completo"
                         {...register("name")}
                         className="pl-10"
                     />
@@ -86,7 +86,7 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
                         id="email"
                         type="email"
                         autoComplete="email"
-                        placeholder="Enter your email"
+                        placeholder="Digite seu email"
                         {...register("email")}
                         className="pl-10"
                     />
@@ -97,14 +97,14 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <div className={clsx("relative transition-transform", errors.password && "animate-shake")}>
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         id="password"
                         autoComplete="new-password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
+                        placeholder="Digite sua senha"
                         {...register("password")}
                         className="pl-10 pr-10"
                     />
@@ -128,14 +128,14 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <div className={clsx("relative transition-transform", errors.confirmPassword && "animate-shake")}>
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         autoComplete="new-password"
                         id="confirmPassword"
                         type="password"
-                        placeholder="Confirm your password"
+                        placeholder="Confirme sua senha"
                         {...register("confirmPassword")}
                         className="pl-10"
                     />
@@ -146,7 +146,7 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
             </div>
 
             <Button type="submit" className="w-full" disabled={!isValid || isLoading}>
-                {isLoading ? "Creating account..." : "Create Account"}
+                {isLoading ? "Criando conta..." : "Criar Conta"}
             </Button>
         </form>
     );

@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FavoriteItem, HistoryItem, Word, WordDefinition, WordListResponse } from "@/types";
+import { FavoriteItem, HistoryItem, Word, WordDefinition, WordListResponse, WordSearchResponse } from "@/types";
 import api from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -53,9 +53,13 @@ export default function Dictionary() {
 
     const fetchWord = useCallback(async (id: string) => {
         try {
-            const { data } = await api.get<WordDefinition>(`/entries/en/${id}`);
-            setWord(data);
-            console.log("Word data:", data);
+            const { data } = await api.get<WordSearchResponse>(`/entries/en/${id}`);
+            const wordData: WordDefinition = {
+                ...data.word,
+                id: data.id,
+                isFavorite: data.isFavorite
+            };
+            setWord(wordData);
         } catch (error) {
             showToast.dictionary.fetchWordError();
             console.error("Erro ao buscar palavra:", error);
@@ -67,7 +71,6 @@ export default function Dictionary() {
             const res = await getHistory();
             if (res.success) {
                 setHistory(res.data);
-                console.log(res.data);
             }
         } catch (error) {
             showToast.history.fetchError();
@@ -79,7 +82,6 @@ export default function Dictionary() {
         try {
             const res = await getFavorites();
             if (res.success) {
-                console.log(res.data);
                 setFavorites(res.data);
             }
         } catch (error) {
@@ -200,6 +202,8 @@ export default function Dictionary() {
     }, [fetchWords]);
 
     const handleToggleFavorite = useCallback(async (wordDef: WordDefinition) => {
+        console.log('handleToggleFavorite called with:', { id: wordDef.id, word: wordDef.word, isFavorite: wordDef.isFavorite });
+        
         let success = false;
         
         if (wordDef.isFavorite) {
@@ -230,20 +234,20 @@ export default function Dictionary() {
                                 <div className="grid grid-cols-3 gap-2">
                                     <TabsList className="col-span-3 md:col-span-2 grid grid-cols-3 h-10">
                                         <TabsTrigger className="px-8" value="wordlist">
-                                            Word list
+                                            Palavras
                                         </TabsTrigger>
                                         <TabsTrigger className="px-8" value="history">
-                                            History
+                                            Histórico
                                         </TabsTrigger>
                                         <TabsTrigger className="px-8" value="favorites">
-                                            Favorites
+                                            Favoritos
                                         </TabsTrigger>
                                     </TabsList>
                                     <div className="mt-2 md:mt-0 col-span-3 md:col-span-1 flex items-center">
                                         {activeTab === "wordlist" && (
                                             <Input
                                                 type="search"
-                                                placeholder="Search words..."
+                                                placeholder="Buscar palavras..."
                                                 value={search}
                                                 onChange={(e) => setSearch(e.target.value)}
                                                 className="h-10 flex-1 w-full"

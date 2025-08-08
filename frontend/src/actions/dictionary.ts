@@ -2,11 +2,11 @@
 "use server";
 
 import api from "@/lib/api";
-import { WordDefinition, WordListResponse, WordQueryParams } from "@/types";
+import { WordDefinition, WordListResponse, WordQueryParams, WordSearchResponse } from "@/types";
 
 export async function searchWord(word: string) {
   try {
-    const { data } = await api.get<WordDefinition>(`/entries/en/${word}`);
+    const { data } = await api.get<WordSearchResponse>(`/entries/en/${word}`);
     
     return {
       success: true,

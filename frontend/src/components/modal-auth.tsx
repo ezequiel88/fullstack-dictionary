@@ -24,11 +24,11 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProp
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{mode === "signup" ? "Create Account" : "Sign In"}</DialogTitle>
+                    <DialogTitle>{mode === "signup" ? "Criar Conta" : "Entrar"}</DialogTitle>
                     <DialogDescription>
                         {mode === "signup"
-                            ? "Start your language learning journey today"
-                            : "Welcome back! Please sign in to continue"}
+                            ? "Comece sua jornada de aprendizado hoje"
+                            : "Bem-vindo de volta! Faça login para continuar"}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -43,24 +43,24 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProp
                 <div className="text-center text-sm">
                     {mode === "signup" ? (
                         <>
-                            Already have an account?{" "}
+                            Já tem uma conta?{" "}
                             <Button
                                 variant="link"
                                 className="p-0 h-auto font-semibold"
                                 onClick={() => onModeChange("signin")}
                             >
-                                Sign in
+                                Entrar
                             </Button>
                         </>
                     ) : (
                         <>
-                            Don&apos;t have an account?{" "}
+                            Não tem uma conta?{" "}
                             <Button
                                 variant="link"
                                 className="p-0 h-auto font-semibold"
                                 onClick={() => onModeChange("signup")}
                             >
-                                Sign up
+                                Criar conta
                             </Button>
                         </>
                     )}

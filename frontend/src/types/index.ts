@@ -87,6 +87,35 @@ export interface WordDefinition {
   sourceUrls: string[];
 }
 
+export interface WordSearchResponse {
+  word: {
+    word: string;
+    phonetic: string | null;
+    phonetics: {
+      text: string | null;
+      audio: string | null;
+      sourceUrl?: string;
+      license?: License;
+    }[];
+    meanings: {
+      partOfSpeech: string;
+      definitions: {
+        definition: string;
+        example?: string;
+        synonyms: string[];
+        antonyms: string[];
+      }[];
+      synonyms: string[];
+      antonyms: string[];
+    }[];
+    license?: License;
+    sourceUrls: string[];
+  };
+  fromCache: boolean;
+  id: string;
+  isFavorite: boolean;
+}
+
 // ===== PAGINATION TYPES =====
 
 export interface CursorPaginationResponse<T> {

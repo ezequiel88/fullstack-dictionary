@@ -18,7 +18,7 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
     const [playingIndex, setPlayingIndex] = useState<number | null>(null);
     const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
     const [currentMeaningIndex, setCurrentMeaningIndex] = useState(0);
-    console.log("Word:", word);
+    
     if (!word?.word) {
         return (
             <div className="space-y-6">
@@ -26,7 +26,7 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
                     <CardContent className="text-center space-y-8 p-0">
                         <Quote size={100} className="mx-auto opacity-5" />
                         <p className="text-muted-foreground text-lg">
-                            Select a word to see its meaning, pronunciation and examples</p>
+                            Selecione uma palavra para ver seu significado, pronúncia e exemplos</p>
                     </CardContent>
                 </Card>
             </div>
@@ -133,12 +133,12 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
                             {currentMeaning.partOfSpeech || "Meaning"}
                         </h2>
                         <p className="text-muted-foreground mb-4">
-                            {currentMeaning?.definitions?.[0]?.definition ?? "No definition"}
+                            {currentMeaning?.definitions?.[0]?.definition ?? "Sem definição"}
                         </p>
                         
                         {currentMeaning?.definitions?.[0]?.example && (
                             <>
-                                <h2 className="font-semibold mt-4">Example</h2>
+                                <h2 className="font-semibold mt-4">Exemplo</h2>
                                 <p className="text-muted-foreground mb-4 italic">
                                     {currentMeaning?.definitions?.[0]?.example}
                                 </p>
@@ -147,7 +147,7 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
 
                         {currentMeaning?.synonyms && currentMeaning.synonyms.length > 0 && (
                             <>
-                                <h2 className="font-semibold mt-4">Synonyms</h2>
+                                <h2 className="font-semibold mt-4">Sinônimos</h2>
                                 <p className="text-muted-foreground mb-4">
                                     {currentMeaning?.synonyms?.join(", ")}
                                 </p>

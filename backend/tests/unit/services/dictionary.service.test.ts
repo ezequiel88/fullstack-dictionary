@@ -46,7 +46,7 @@ describe('DictionaryService', () => {
       ],
     }];
     
-    const normalizedWordDefinition = [{
+    const normalizedWordDefinition = {
       word: 'hello',
       phonetic: null,
       phonetics: [{ text: '/həˈloʊ/', audio: null, sourceUrl: undefined, license: undefined }],
@@ -60,7 +60,7 @@ describe('DictionaryService', () => {
       ],
       license: undefined,
       sourceUrls: [],
-    }];
+    };
 
     it('should return cached result when available', async () => {
       const cachedResult = { word: normalizedWordDefinition, fromCache: true };

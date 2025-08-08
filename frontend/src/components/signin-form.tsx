@@ -14,8 +14,8 @@ import { useAuth } from "@/context/authContext";
 import { showToast, getErrorMessage } from "@/lib/toast";
 
 const signInSchema = z.object({
-    email: z.email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    email: z.email("Endereço de email inválido"),
+    password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
 
 type SignInFormValues = z.infer<typeof signInSchema>;
@@ -61,7 +61,7 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
                         id="email"
                         type="email"
                         autoComplete="email"
-                        placeholder="Enter your email"
+                        placeholder="Digite seu email"
                         {...register("email")}
                         className="pl-10"
                     />
@@ -72,14 +72,14 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <div className={clsx("relative transition-transform", errors.password && "animate-shake")}>
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         id="password"
                         autoComplete="current-password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
+                        placeholder="Digite sua senha"
                         {...register("password")}
                         className="pl-10 pr-10"
                     />
@@ -103,7 +103,7 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
             </div>
 
             <Button type="submit" className="w-full" disabled={!isValid || isLoading}>
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Entrando..." : "Entrar"}
             </Button>
         </form>
     );

@@ -53,12 +53,18 @@ export class DictionaryService {
 
     // Normalize the data
     const wordNormalized = normalizeDictionaryEntries(wordDictionary);
+    
+    // Return the first entry since the frontend expects a single object
+    const firstEntry = wordNormalized[0];
+    if (!firstEntry) {
+      return null;
+    }
 
     // Cache the result
     try {
       await this.cacheService.set(
         cacheKey,
-        JSON.stringify(wordNormalized),
+        JSON.stringify(firstEntry),
         3600 // 1 hora
       );
     } catch (cacheError) {
@@ -67,7 +73,7 @@ export class DictionaryService {
     }
 
     return {
-      word: wordNormalized,
+      word: firstEntry,
       fromCache: false
     };
   }
