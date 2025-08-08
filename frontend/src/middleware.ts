@@ -8,11 +8,13 @@ const publicRoutes = ["/"];
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req;
 
-  // Permite service worker e outros arquivos PWA sem redirecionamento
+  // Permite service worker, arquivos PWA e SEO sem redirecionamento
   if (nextUrl.pathname === "/sw.js" || 
       nextUrl.pathname === "/offline.html" ||
       nextUrl.pathname === "/manifest.json" ||
-      nextUrl.pathname === "/test-sw.html") {
+      nextUrl.pathname === "/test-sw.html" ||
+      nextUrl.pathname === "/robots.txt" ||
+      nextUrl.pathname === "/sitemap.xml") {
     return NextResponse.next();
   }
 
@@ -41,6 +43,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api/auth/|_next/|favicon.ico|manifest.json|sw.js|offline.html|test-sw.html|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)",
+    "/((?!api/auth/|_next/|favicon.ico|manifest.json|sw.js|offline.html|test-sw.html|robots.txt|sitemap.xml|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico)$).*)",
   ],
 };

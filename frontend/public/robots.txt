@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: http://localhost:3000/sitemap.xml
+
+# Disallow specific paths
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /test-sw.html
+
+# Allow important PWA files
+Allow: /manifest.json
+Allow: /sw.js
+Allow: /offline.html

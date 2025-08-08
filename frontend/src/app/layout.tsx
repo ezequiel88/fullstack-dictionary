@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -21,8 +21,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Dictionary App - Dicionário Completo",
-  description: "Aplicativo completo de dicionário com definições, favoritos e histórico. Funciona offline!",
+  description: "Aplicativo completo de dicionário com definições, pronúncia, favoritos e histórico. PWA que funciona offline com cache inteligente e instalação nativa.",
   applicationName: "Dictionary App",
+  keywords: ["dicionário", "dictionary", "definições", "palavras", "inglês", "português", "PWA", "offline"],
+  authors: [{ name: "Ezequiel Tavares", url: "https://github.com/ezequiel88" }],
+  creator: "Ezequiel Tavares",
+  publisher: "Dictionary App",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -38,13 +53,7 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: "cover"
-  },
+
   icons: {
     icon: [
       { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
@@ -61,18 +70,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     title: "Dictionary App - Dicionário Completo",
-    description: "Aplicativo completo de dicionário com definições, favoritos e histórico. Funciona offline!",
+    description: "Aplicativo completo de dicionário com definições, pronúncia, favoritos e histórico. PWA que funciona offline com cache inteligente e instalação nativa.",
     siteName: "Dictionary App",
-    url: "https://dictionary.com",
-    images: [{ url: "https://dictionary.com/og.png" }]
+    url: "http://localhost:3000",
+    locale: "pt_BR",
+    images: [{ 
+      url: "/icon-512.png",
+      width: 512,
+      height: 512,
+      alt: "Dictionary App Logo"
+    }]
   },
   twitter: {
     card: "summary_large_image",
     title: "Dictionary App - Dicionário Completo",
-    description: "Aplicativo completo de dicionário com definições, favoritos e histórico. Funciona offline!",
+    description: "Aplicativo completo de dicionário com definições, pronúncia, favoritos e histórico. PWA que funciona offline com cache inteligente e instalação nativa.",
     creator: "@ezequielTav",
-    images: ["https://dictionary.com/og-twitter.png"],
-    site: "https://dictionary.com"
+    images: ["/icon-512.png"],
+    site: "@dictionaryapp"
   },
   other: {
     "mobile-web-app-capable": "yes",
@@ -84,6 +99,14 @@ export const metadata: Metadata = {
   }
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#3b82f6"
+};
 
 export default function RootLayout({
   children,
