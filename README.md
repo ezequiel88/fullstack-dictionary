@@ -24,7 +24,7 @@ chmod +x start.sh
 
 #### Ou diretamente com Docker Compose
 ```bash
-cd infra
+cd docker
 docker-compose up --build -d
 ```
 
@@ -42,7 +42,7 @@ Após a execução, a aplicação estará disponível em:
 
 ```bash
 # Parar a aplicação
-cd infra
+cd docker
 docker-compose down
 
 # Ver logs
@@ -64,7 +64,7 @@ docker-compose up --build -d
 ```
 ├── backend/          # API Node.js com Fastify
 ├── frontend/         # Aplicação Next.js
-├── infra/           # Configurações Docker
+├── docker/           # Configurações Docker
 ├── docs/            # Documentação
 ├── start.bat        # Script de inicialização Windows
 └── start.sh         # Script de inicialização Linux/Mac

@@ -44,7 +44,7 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
         reset
     } = useForm<SignUpFormValues>({
         resolver: zodResolver(signUpSchema),
-        mode: "onChange"
+        mode: "onSubmit"
     });
 
     const onSubmit = async (data: SignUpFormValues) => {
@@ -54,7 +54,7 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
             showToast.auth.signupSuccess();
             reset();
             onSuccess();
-            router.replace("/dictionary");
+            router.refresh();
         } catch (error: unknown) {
             const errorMessage = getErrorMessage(error);
             showToast.auth.signupError(errorMessage);

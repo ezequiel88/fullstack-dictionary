@@ -4,11 +4,11 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function logoutAction() {
-  const cookieStore = await cookies();
-
   try {
+    const cookieStore = await cookies();
     // Remover token do cookie
     cookieStore.delete("token");
+
     redirect("/");
 
     return {
@@ -17,7 +17,7 @@ export async function logoutAction() {
     };
   } catch (error) {
     console.error("Logout error:", error);
-    
+
     return {
       success: false,
       message: "Erro ao fazer logout",

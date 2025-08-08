@@ -37,7 +37,7 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
         reset
     } = useForm<SignInFormValues>({
         resolver: zodResolver(signInSchema),
-        mode: "onChange"
+        mode: "onSubmit"
     });
 
     const onSubmit = async (data: SignInFormValues) => {
@@ -47,7 +47,7 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
             showToast.auth.loginSuccess();
             reset();
             onSuccess();
-            router.replace("/dictionary");
+            router.refresh();
         } catch (error: unknown) {
             const errorMessage = getErrorMessage(error);
             showToast.auth.loginError(errorMessage);
@@ -105,7 +105,7 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
                 )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={!isValid || isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Entrando..." : "Entrar"}
             </Button>
         </form>

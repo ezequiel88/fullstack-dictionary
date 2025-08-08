@@ -14,12 +14,15 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/context/authContext";
 import { User } from "@/types";
 import { Skeleton } from "./ui/skeleton";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
     const { user, signOut, isLoading } = useAuth();
+    const router = useRouter();
 
     const handleSignOut = async () => {
         await signOut();
+        router.replace("/");
     };
 
     const getUserInitials = (user: User) => {

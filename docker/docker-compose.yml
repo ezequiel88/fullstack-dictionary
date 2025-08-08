@@ -1,3 +1,5 @@
+name: fullstack-dictionary
+
 services:
   postgres:
     image: postgres:16.4-alpine

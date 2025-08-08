@@ -6,7 +6,7 @@ echo.
 echo Iniciando a aplicacao completa...
 echo.
 
-cd infra
+cd docker
 
 echo Parando containers existentes...
 docker-compose down
@@ -22,6 +22,7 @@ echo ========================================
 echo.
 echo Frontend: http://localhost:3000
 echo Backend API: http://localhost:3030
+echo Documentação API: http://localhost:3030/docs
 echo PgAdmin (opcional): http://localhost:5050 (usuario: desafio@coodesh.com, senha: admin)
 echo.
 echo Para parar a aplicacao, execute:
