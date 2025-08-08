@@ -165,11 +165,7 @@ docker-compose exec postgres psql -U dictionary -d dictionary
 
 ## 🏗️ Arquitetura
 
-Arquitetura fullstack moderna com separação clara de responsabilidades:
-
-```
-Frontend (Next.js 15 + PWA) ←→ Backend (Fastify + Clean Architecture) ←→ Database (PostgreSQL + Redis)
-```
+Arquitetura fullstack moderna com separação clara de responsabilidades
 
 **Detalhes técnicos completos**: Consulte os READMEs específicos de cada módulo para informações detalhadas sobre arquitetura, padrões e implementação.
 
@@ -220,7 +216,7 @@ fullstack-dictionary/
 └── 📄 start.sh          # Script Linux/Mac
 ```
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Tecnologias Principais
 
 **Backend**: Node.js + TypeScript + Fastify + Prisma + PostgreSQL + Redis + JWT  
 **Frontend**: Next.js 15 + React 19 + TypeScript + Tailwind + PWA  
