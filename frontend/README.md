@@ -13,12 +13,12 @@ Uma interface moderna e responsiva para o dicionário online que vai fazer você
 - ✅ **Framer Motion** para animações fluidas
 - ✅ **React Hook Form** com validação Zod
 - ✅ **Axios** para comunicação com a API
-- ✅ **Next Themes** para suporte a tema escuro/claro
+- ✅ **Next Themes** para suporte a tema escuro/claro (usando o tema padrão do navegador)
 - ✅ **Lucide React** para ícones consistentes
 - ✅ **PWA Completo** com service worker, cache offline e instalação
 - ✅ **Service Worker** com estratégias de cache inteligentes
 - ✅ **Offline Support** com fallbacks e sincronização
-- ✅ **Push Notifications** preparado para notificações
+- ✅ **Push Notifications** preparado para notificações (mas não implementado notificações push)
 - ✅ **ESLint** para qualidade de código
 - ✅ **Responsive Design** para todos os dispositivos
 
@@ -154,18 +154,18 @@ O projeto segue as melhores práticas do **Next.js 15** com **App Router**, orga
 
 ### Autenticação
 - **Login/Cadastro** com validação em tempo real
-- **Persistência de sessão** com localStorage
+- **Persistência de sessão** com cookies (http only)
 - **Proteção de rotas** automática
 - **Logout** seguro
 
 ### Dicionário
-- **Busca de palavras** com autocomplete
+- **Busca de palavras** com debounce para performance
 - **Definições detalhadas** com pronúncia
 - **Histórico de pesquisas** personalizado
 - **Sistema de favoritos** intuitivo
 
 ### Interface
-- **Tema escuro/claro** com persistência
+- **Tema escuro/claro** utilizando o tema padrão do navegador
 - **Design responsivo** para todos os dispositivos
 - **Animações suaves** com Framer Motion
 - **Feedback visual** com toasts e loading states
@@ -358,7 +358,6 @@ src/hooks/
 - [ ] **Push Notifications** - Notificações push reais
 - [ ] **Periodic Sync** - Sincronização periódica
 - [ ] **Share Target** - Receber compartilhamentos
-- [ ] **File Handling** - Manipular arquivos
 - [ ] **Shortcuts** - Atalhos dinâmicos
 - [ ] **Badging** - Badge no ícone do app
 
