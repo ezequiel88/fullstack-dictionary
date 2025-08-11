@@ -82,7 +82,7 @@ JWT_EXPIRES_IN="7d"
 PORT=3030
 NODE_ENV="development"
 
-# Redis (opcional)
+# Redis
 REDIS_URL="redis://localhost:6379"
 
 # External API

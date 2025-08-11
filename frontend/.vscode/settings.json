@@ -1,0 +1,9 @@
+{
+  "jest.jestCommandLine": "pnpm test",
+  "jest.autoRun": {
+    "watch": false,
+    "onStartup": ["all-tests"]
+  },
+  "jest.showCoverageOnLoad": true,
+  "typescript.preferences.importModuleSpecifier": "relative"
+}

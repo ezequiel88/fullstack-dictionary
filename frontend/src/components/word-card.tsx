@@ -88,7 +88,12 @@ export default function WordCard({ word, onToggleFavorite }: Props) {
                         onClick={() => onToggleFavorite(word)}
                         className="rounded-full hover:bg-primary/90 absolute top-2 right-2 z-10"
                     >
-                        {word.isFavorite ? <Heart className="size-5" fill="red" strokeWidth={1} /> : <Heart className="size-5" />}
+                        <Heart 
+                            className="size-5" 
+                            fill={word.isFavorite ? "red" : "none"} 
+                            strokeWidth={1}
+                            data-testid="heart-icon"
+                        />
                     </Button>
                 </CardContent>
             </Card>

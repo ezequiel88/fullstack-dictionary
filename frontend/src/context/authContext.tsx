@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refreshUser = async () => {
+  const refreshUser = async (isInitialLoad = false) => {
     try {
       const authenticated = await isAuthenticated();
       if (authenticated) {
@@ -28,20 +28,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (result.success) {
           setUser(result.data);
         } else {
-          setUser(null);
+          if (isInitialLoad) {
+            setUser(null);
+          }
         }
       } else {
         setUser(null);
       }
     } catch {
-      setUser(null);
+      if (isInitialLoad) {
+        setUser(null);
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    refreshUser();
+    refreshUser(true);
   }, []);
 
   const signIn = async (data: AuthSignIn) => {
@@ -92,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signUp,
     signOut,
-    refreshUser,
+    refreshUser: () => refreshUser(false),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

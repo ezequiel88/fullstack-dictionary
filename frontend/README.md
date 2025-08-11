@@ -21,6 +21,7 @@ Uma interface moderna e responsiva para o dicionário online que vai fazer você
 - ✅ **Push Notifications** preparado para notificações (mas não implementado notificações push)
 - ✅ **ESLint** para qualidade de código
 - ✅ **Responsive Design** para todos os dispositivos
+- ✅ **Testes Abrangentes** com Jest e Testing Library
 
 ## 📋 Índice
 
@@ -28,6 +29,7 @@ Uma interface moderna e responsiva para o dicionário online que vai fazer você
 - [Instalação](#-instalação)
 - [Configuração](#-configuração)
 - [Execução](#-execução)
+- [Testes](#-testes)
 - [Build e Deploy](#-build-e-deploy)
 - [Arquitetura](#-arquitetura)
 - [Funcionalidades](#-funcionalidades)
@@ -110,71 +112,47 @@ pnpm start
 
 A aplicação estará disponível em: `http://localhost:3000`
 
-## 🏗️ Arquitetura
+## 🧪 Testes
 
-O projeto segue as melhores práticas do **Next.js 15** com **App Router**, organizando o código de forma modular e escalável:
+O projeto possui uma suíte completa de testes para garantir qualidade e confiabilidade do código:
 
-### Estrutura da Arquitetura
+### Executar Testes
+
+```bash
+# Executar todos os testes
+pnpm test
+
+# Testes em modo watch (desenvolvimento)
+pnpm test:watch
+
+# Testes com relatório de cobertura
+pnpm test:coverage
+
+# Testes para CI/CD (sem watch)
+pnpm test:ci
+```
+
+### Configuração de Testes
+
+#### Jest Configuration (`jest.config.js`)
+- **Framework**: Next.js Jest integration
+- **Environment**: jsdom para testes de componentes React
+- **Setup**: `jest.setup.js` para configurações globais
+- **Module Mapping**: Suporte a path aliases (`@/`)
+- **Coverage**: Configurado para 70% de cobertura mínima
+
+#### Jest Setup (`jest.setup.js`)
+- **Testing Library**: Configuração do `@testing-library/jest-dom`
+- **React 19**: Configuração para React 19 com `IS_REACT_ACT_ENVIRONMENT`
+- **Console Suppression**: Supressão elegante de logs esperados durante testes
+- **Mocks Globais**: 
+  - Audio API mockada para testes de componentes
+  - Next.js navigation hooks mockados
+  - IntersectionObserver e ResizeObserver mockados
+
+### Estrutura de Testes
 
 ```
-┌─────────────────────────────────────┐
-│              Views                  │  ← Páginas e layouts
-├─────────────────────────────────────┤
-│            Components               │  ← Componentes reutilizáveis
-├─────────────────────────────────────┤
-│              Hooks                  │  ← Custom hooks
-├─────────────────────────────────────┤
-│            Actions                  │  ← Server actions
-├─────────────────────────────────────┤
-│              Types                  │  ← Definições TypeScript
-└─────────────────────────────────────┘
-```
-
-#### 🎯 App Router (`src/app/`)
-- **Layouts**: Estruturas de página reutilizáveis
-- **Pages**: Páginas da aplicação
-- **Loading**: Estados de carregamento
-- **Error**: Tratamento de erros
-
-#### 🧩 Components (`src/components/`)
-- **UI Components**: Componentes base do Shadcn/ui
-- **Feature Components**: Componentes específicos de funcionalidades
-- **Layout Components**: Componentes de estrutura
-
-#### 🎣 Hooks (`src/hooks/`)
-- **Custom Hooks**: Lógica reutilizável
-- **API Hooks**: Comunicação com backend
-- **State Management**: Gerenciamento de estado
-
-#### ⚡ Actions (`src/actions/`)
-- **Server Actions**: Ações do lado servidor
-- **API Calls**: Comunicação com API externa
-
-## 🌟 Funcionalidades
-
-### Autenticação
-- **Login/Cadastro** com validação em tempo real
-- **Persistência de sessão** com cookies (http only)
-- **Proteção de rotas** automática
-- **Logout** seguro
-
-### Dicionário
-- **Busca de palavras** com debounce para performance
-- **Definições detalhadas** com pronúncia
-- **Histórico de pesquisas** personalizado
-- **Sistema de favoritos** intuitivo
-
-### Interface
-- **Tema escuro/claro** utilizando o tema padrão do navegador
-- **Design responsivo** para todos os dispositivos
-- **Animações suaves** com Framer Motion
-- **Feedback visual** com toasts e loading states
-
-### Performance
-- **Server Side Rendering** para SEO otimizado
-- **Static Generation** para páginas estáticas
-- **Image Optimization** automática
-- **Code Splitting** inteligente
 
 ## 📱 PWA (Progressive Web App)
 

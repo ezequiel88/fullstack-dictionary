@@ -28,6 +28,7 @@ Desenvolvimento de uma aplicação fullstack que permite:
 - [Execução](#-execução)
 - [Acessos](#-acessos)
 - [Comandos Úteis](#-comandos-úteis)
+- [Testes](#-testes)
 - [Arquitetura](#-arquitetura)
 - [Funcionalidades](#-funcionalidades)
 - [Desenvolvimento](#-desenvolvimento)
@@ -160,8 +161,78 @@ docker-compose --profile admin up -d
 
 # Executar comandos dentro dos containers
 docker-compose exec backend npm run test
+docker-compose exec frontend npm run test
 docker-compose exec postgres psql -U dictionary -d dictionary
 ```
+
+## 🧪 Testes
+
+O projeto possui uma suíte completa de testes para garantir qualidade e confiabilidade:
+
+### Backend (Jest + Supertest)
+```bash
+# Executar todos os testes do backend
+cd backend
+pnpm test
+
+# Testes com cobertura
+pnpm test:coverage
+
+# Testes em modo watch
+pnpm test:watch
+
+# Apenas testes unitários
+pnpm test:unit
+
+# Apenas testes de integração
+pnpm test:integration
+```
+
+### Frontend (Jest + Testing Library)
+```bash
+# Executar todos os testes do frontend
+cd frontend
+pnpm test
+
+# Testes com cobertura
+pnpm test:coverage
+
+# Testes em modo watch
+pnpm test:watch
+
+# Testes para CI/CD
+pnpm test:ci
+```
+
+### Executar Testes via Docker
+```bash
+# Testes do backend
+docker-compose exec backend npm run test
+
+# Testes do frontend
+docker-compose exec frontend npm run test
+
+# Testes com cobertura
+docker-compose exec backend npm run test:coverage
+docker-compose exec frontend npm run test:coverage
+```
+
+### Cobertura de Testes
+
+#### Backend
+- **Controllers**: Validação de rotas e responses
+- **Services**: Lógica de negócio isolada
+- **Repositories**: Acesso a dados
+- **Middlewares**: Autenticação e validação
+- **Integração**: Fluxos completos da API
+
+#### Frontend
+- **Components**: Renderização e interações
+- **Hooks**: Lógica customizada
+- **Actions**: Server actions
+- **Utils**: Funções utilitárias
+- **Context**: Gerenciamento de estado
+- **Views**: Páginas completas
 
 ## 🏗️ Arquitetura
 
@@ -184,7 +255,7 @@ Arquitetura fullstack moderna com separação clara de responsabilidades
 
 Para desenvolvimento detalhado, consulte os READMEs específicos:
 - **[📚 Backend README](./backend/README.md)** - Clean Architecture, testes, API
-- **[🎨 Frontend README](./frontend/README.md)** - PWA, componentes, hooks
+- **[🎨 Frontend README](./frontend/README.md)** - PWA, componentes, hooks, testes
 
 ## 🐳 Docker
 
